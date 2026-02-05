@@ -1,0 +1,208 @@
+// Wallet Warriors - Prisma Schema
+// 💸 A satirical gacha game where the monetization IS the game
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// NextAuth.js Required Tables
+// ============================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// Game Tables
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  
+  // Game-specific fields
+  username        String?   @unique
+  crunchCoin      Int       @default(0)
+  trickleTokens   Int       @default(0)
+  totalSpent      Decimal   @default(0) @db.Decimal(10, 2) // Lifetime $ spent
+  rankingPoints   Int       @default(0)
+  pityCounter     Int       @default(0) // Pulls since last 5★
+  isBot           Boolean   @default(false)
+  lastLoginAt     DateTime?
+  loginStreak     Int       @default(0) // Consecutive daily logins
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  accounts       Account[]
+  sessions       Session[]
+  characters     UserCharacter[]
+  buzzwords      UserBuzzword[]
+  transactions   Transaction[]
+  battlesAsAttacker Battle[] @relation("Attacker")
+  battlesAsDefender Battle[] @relation("Defender")
+  battlesWon        Battle[] @relation("Winner")
+
+  @@index([rankingPoints(sort: Desc)]) // For leaderboard queries
+  @@index([isBot])
+}
+
+model Character {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  rarity    Int      // 1-5 stars
+  basePower Int      // Base power determined by rarity
+  bio       String   @db.Text // Satirical backstory
+  imageUrl  String?
+  
+  createdAt DateTime @default(now())
+
+  // Relations
+  owners UserCharacter[]
+
+  @@index([rarity])
+}
+
+model UserCharacter {
+  id          String   @id @default(cuid())
+  userId      String
+  characterId String
+  fedPower    Int      @default(0) // Additional power from spending CrunchCoin
+  
+  acquiredAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, characterId]) // One copy per character per user
+  @@index([userId])
+  @@index([characterId])
+}
+
+model Battle {
+  id                  String   @id @default(cuid())
+  attackerId          String
+  defenderId          String
+  winnerId            String?
+  
+  attackerPower       Int      // Snapshot of attacker's total power at battle time
+  defenderPower       Int      // Snapshot of defender's total power at battle time
+  attackerRoll        Int?     // The RNG variance applied (±5%)
+  defenderRoll        Int?     // The RNG variance applied (±5%)
+  
+  rankingPointsChange Int      // Points won/lost
+  buzzwordsUsed       Json?    // Array of buzzword IDs used in battle
+  
+  createdAt DateTime @default(now())
+
+  // Relations
+  attacker User  @relation("Attacker", fields: [attackerId], references: [id], onDelete: Cascade)
+  defender User  @relation("Defender", fields: [defenderId], references: [id], onDelete: Cascade)
+  winner   User? @relation("Winner", fields: [winnerId], references: [id], onDelete: SetNull)
+
+  @@index([attackerId])
+  @@index([defenderId])
+  @@index([createdAt(sort: Desc)])
+}
+
+model Transaction {
+  id                String            @id @default(cuid())
+  userId            String
+  stripePaymentId   String?           @unique
+  stripeSessionId   String?           @unique
+  amount            Decimal           @db.Decimal(10, 2) // USD amount
+  crunchCoinGranted Int
+  packageType       String            // 'seed_round', 'series_a', etc.
+  status            TransactionStatus @default(PENDING)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model Buzzword {
+  id       String @id @default(cuid())
+  name     String @unique
+  effect   Json   // { type: 'power_boost', value: 20, duration: 'battle' }
+  cost     Int    // Cost in CrunchCoin
+  imageUrl String?
+  description String? @db.Text
+  
+  createdAt DateTime @default(now())
+
+  // Relations
+  owners UserBuzzword[]
+}
+
+model UserBuzzword {
+  id         String @id @default(cuid())
+  userId     String
+  buzzwordId String
+  quantity   Int    @default(0)
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  buzzword Buzzword @relation(fields: [buzzwordId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, buzzwordId])
+  @@index([userId])
+}

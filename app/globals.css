@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== BASE STYLES ===== */
+:root {
+  --color-bg-primary: #0c0c16;
+  --color-bg-surface: #0f0f19;
+  --color-bg-elevated: #13131f;
+  --color-border: #1a1a2e;
+  --color-border-hover: #2a2a3e;
+  --color-crunch: #fbbf24;
+  --color-trickle: #a3e635;
+  --color-accent-red: #f87171;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-text-ghost: #475569;
+  --color-text-barely: #334155;
+}
+
+body {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a12;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* ===== TICKER ANIMATION ===== */
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker-scroll 40s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* ===== UTILITY ANIMATIONS ===== */
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 0.2s ease forwards;
+}
+
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+/* ===== NAV LINK HOVER ===== */
+.nav-link {
+  @apply flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[13px] font-normal transition-all duration-200;
+  @apply text-slate-400 bg-transparent border-none cursor-pointer;
+  font-family: var(--font-display);
+}
+
+.nav-link:hover {
+  @apply bg-white/[0.04] text-slate-300;
+}
+
+.nav-link--active {
+  @apply font-semibold text-amber-400 bg-amber-400/10;
+}
+
+.nav-link--active:hover {
+  @apply bg-amber-400/[0.15] text-amber-400;
+}
+
+/* ===== FOOTER LINK HOVER ===== */
+.footer-link {
+  @apply text-[13px] text-slate-600 no-underline transition-colors duration-200;
+}
+
+.footer-link:hover {
+  @apply text-slate-400;
+}
+
+/* ===== CARD HOVER ===== */
+.card-surface {
+  @apply bg-[rgba(15,15,25,0.8)] border border-[#1a1a2e] rounded-xl transition-colors duration-200;
+}
+
+.card-surface:hover {
+  @apply border-[#2a2a3e];
+}
