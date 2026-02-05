@@ -146,6 +146,7 @@ export default async function CollectionPage() {
                   character={uc.character}
                   fedPower={uc.fedPower}
                   acquiredAt={uc.acquiredAt}
+                  href={`/collection/${uc.id}`}
                 >
                   <FeedButton
                     userCharacterId={uc.id}

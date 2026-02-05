@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { Character } from "@prisma/client";
 
 interface CharacterCardProps {
@@ -9,6 +10,7 @@ interface CharacterCardProps {
   acquiredAt?: Date;
   showBio?: boolean;
   children?: React.ReactNode;
+  href?: string;
 }
 
 const RARITY_CONFIG = {
@@ -80,6 +82,7 @@ export function CharacterCard({
   acquiredAt,
   showBio = false,
   children,
+  href,
 }: CharacterCardProps) {
   const [expanded, setExpanded] = useState(showBio);
   const config = RARITY_CONFIG[character.rarity as keyof typeof RARITY_CONFIG];
@@ -116,7 +119,13 @@ export function CharacterCard({
 
         {/* Name */}
         <h3 className="text-base font-bold text-slate-100 font-display leading-tight mb-2">
-          {character.name}
+          {href ? (
+            <Link href={href} className="hover:text-white transition-colors">
+              {character.name}
+            </Link>
+          ) : (
+            character.name
+          )}
         </h3>
 
         {/* Power Stats */}
@@ -154,6 +163,16 @@ export function CharacterCard({
           <p className="mt-3 text-[9px] text-slate-700 font-mono uppercase tracking-wider">
             Acquired {formatDate(acquiredAt)}
           </p>
+        )}
+
+        {/* Detail link */}
+        {href && (
+          <Link
+            href={href}
+            className="mt-3 block text-center text-[10px] font-mono text-slate-600 hover:text-slate-400 uppercase tracking-wider transition-colors"
+          >
+            View Details &rarr;
+          </Link>
         )}
 
         {/* Action slot */}
