@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { YourRank } from "@/components/YourRank";
 import { UsernameForm } from "./UsernameForm";
 
 export default async function ProfilePage() {
@@ -149,6 +150,9 @@ export default async function ProfilePage() {
               <StatTile icon="⚔️" value={user._count.battlesAsAttacker} label="Battles Fought" />
               <StatTile icon="🏆" value={`${winRate}%`} label="Win Rate" />
             </div>
+
+            {/* Your Rankings */}
+            <YourRank userId={session.user.id} />
 
             {/* Warning */}
             <div className="bg-red-500/[0.04] border border-red-500/10 rounded-xl p-4">
