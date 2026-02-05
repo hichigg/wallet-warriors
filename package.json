@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "db:seed": "tsx prisma/seed.ts",
-    "db:seed-bots": "tsx prisma/seed-bots.ts"
+    "db:seed-bots": "tsx prisma/seed-bots.ts",
+    "db:sim-battles": "tsx prisma/sim-battles.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
