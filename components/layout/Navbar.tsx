@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
 
-// --- NAV ITEMS ---
 const navItems = [
   { name: "Home", href: "/", icon: HomeIcon },
   { name: "Collection", href: "/collection", icon: CollectionIcon },
@@ -17,7 +16,6 @@ const navItems = [
   { name: "Leaderboard", href: "/leaderboard", icon: LeaderboardIcon },
 ] as const;
 
-// --- NAVBAR ---
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
@@ -32,30 +30,36 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="bg-[rgba(13,13,20,0.95)] backdrop-blur-xl border-b border-ww-border sticky top-0 z-50">
+      <nav className="bg-[rgba(10,10,16,0.92)] backdrop-blur-2xl border-b border-[#1a1a2e]/80 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          {/* --- Logo --- */}
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 no-underline group">
-            <span className="text-[22px] group-hover:scale-110 transition-transform duration-200">
+            <span className="text-[22px] group-hover:scale-110 transition-transform duration-300">
               💸
             </span>
             <div>
-              <div className="text-[16px] font-extrabold tracking-[0.12em] uppercase text-slate-100 leading-tight font-display">
+              <div className="text-[15px] font-extrabold tracking-[0.14em] uppercase text-slate-100 leading-tight font-display">
                 Wallet Warriors
               </div>
-              <div className="text-[9px] tracking-[0.25em] uppercase text-slate-600 font-mono">
+              <div className="text-[8px] tracking-[0.3em] uppercase text-slate-700 font-mono">
                 A Wealth Experience™
               </div>
             </div>
           </Link>
 
-          {/* --- Desktop Nav Links --- */}
+          {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-0.5">
             {navItems.map(({ name, href, icon: Icon }) => (
               <Link
                 key={name}
                 href={href}
-                className={`nav-link ${isActive(href) ? "nav-link--active" : ""}`}
+                className={`
+                  flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[13px] font-normal transition-all duration-200 font-display
+                  ${isActive(href)
+                    ? "font-semibold text-crunch bg-crunch-bg border border-crunch-border/30"
+                    : "text-slate-500 bg-transparent hover:bg-white/[0.03] hover:text-slate-300"
+                  }
+                `}
               >
                 <Icon />
                 {name}
@@ -63,10 +67,10 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* --- Desktop Right: Auth State --- */}
+          {/* Desktop Right */}
           <div className="hidden lg:flex items-center gap-4">
             {isLoading ? (
-              <div className="w-20 h-9 bg-slate-800 rounded-lg animate-pulse" />
+              <div className="w-20 h-9 bg-[#1a1a2e] rounded-lg animate-pulse" />
             ) : session ? (
               <>
                 <CurrencyDisplay
@@ -78,10 +82,9 @@ export function Navbar() {
                     href="/profile"
                     className={`
                       w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 border-2 overflow-hidden
-                      ${
-                        isActive("/profile")
-                          ? "border-amber-400"
-                          : "border-slate-700 hover:border-slate-500"
+                      ${isActive("/profile")
+                        ? "border-crunch shadow-[0_0_10px_rgba(251,191,36,0.15)]"
+                        : "border-[#2a2a3e] hover:border-slate-500"
                       }
                     `}
                   >
@@ -99,7 +102,7 @@ export function Navbar() {
                   </Link>
                   <button
                     onClick={() => signOut()}
-                    className="px-3 py-1.5 text-[11px] font-mono text-slate-500 hover:text-slate-300 transition-colors"
+                    className="px-3 py-1.5 text-[10px] font-mono text-slate-600 hover:text-slate-400 transition-colors uppercase tracking-wider"
                   >
                     Logout
                   </button>
@@ -108,17 +111,17 @@ export function Navbar() {
             ) : (
               <button
                 onClick={() => signIn()}
-                className="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-semibold text-sm rounded-xl transition-all duration-200 shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30"
+                className="px-5 py-2 bg-crunch hover:bg-crunch-dark text-amber-950 font-bold text-[13px] rounded-xl transition-all duration-200 shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 font-display uppercase tracking-wider"
               >
                 Sign In
               </button>
             )}
           </div>
 
-          {/* --- Mobile Hamburger --- */}
+          {/* Mobile Hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden bg-transparent border-none text-slate-400 cursor-pointer p-1 hover:text-slate-200 transition-colors"
+            className="lg:hidden bg-transparent border-none text-slate-500 cursor-pointer p-1 hover:text-slate-300 transition-colors"
             aria-label="Toggle navigation menu"
           >
             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
@@ -126,26 +129,26 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* --- Mobile Menu Overlay --- */}
+      {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="fixed top-16 inset-x-0 bottom-0 bg-[rgba(7,7,12,0.97)] backdrop-blur-2xl z-40 p-6 flex flex-col gap-2 animate-fade-in-down lg:hidden overflow-y-auto">
+        <div className="fixed top-16 inset-x-0 bottom-0 bg-[rgba(7,7,12,0.98)] backdrop-blur-2xl z-40 p-6 flex flex-col gap-1.5 animate-fade-in-down lg:hidden overflow-y-auto">
           {session ? (
             <>
-              <div className="mb-4 flex items-center gap-3">
+              <div className="mb-4 flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-[#1a1a2e]">
                 {session.user.image && (
                   <Image
                     src={session.user.image}
                     alt={session.user.name || "Profile"}
                     width={40}
                     height={40}
-                    className="rounded-full"
+                    className="rounded-full border-2 border-crunch/30"
                   />
                 )}
                 <div>
-                  <p className="text-sm font-semibold text-slate-200">
+                  <p className="text-sm font-semibold text-slate-200 font-display">
                     {session.user.name}
                   </p>
-                  <p className="text-[11px] text-slate-600 font-mono">
+                  <p className="text-[10px] text-slate-600 font-mono">
                     {session.user.email}
                   </p>
                 </div>
@@ -163,7 +166,7 @@ export function Navbar() {
                 setMobileOpen(false);
                 signIn();
               }}
-              className="mb-4 w-full px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-amber-950 font-semibold text-sm rounded-xl"
+              className="mb-4 w-full px-5 py-3 bg-crunch hover:bg-crunch-dark text-amber-950 font-bold text-sm rounded-xl font-display uppercase tracking-wider"
             >
               Sign In to Start
             </button>
@@ -176,11 +179,10 @@ export function Navbar() {
                 href={href}
                 onClick={() => setMobileOpen(false)}
                 className={`
-                  flex items-center gap-3 px-4 py-3.5 rounded-xl text-[16px] no-underline transition-all duration-200 font-display
-                  ${
-                    isActive(href)
-                      ? "font-semibold text-amber-400 bg-amber-400/10"
-                      : "font-normal text-slate-400 bg-transparent active:bg-white/[0.04]"
+                  flex items-center gap-3 px-4 py-3.5 rounded-xl text-[15px] no-underline transition-all duration-200 font-display
+                  ${isActive(href)
+                    ? "font-semibold text-crunch bg-crunch-bg border border-crunch-border/30"
+                    : "font-normal text-slate-500 bg-transparent active:bg-white/[0.03]"
                   }
                 `}
               >
@@ -196,16 +198,15 @@ export function Navbar() {
                 setMobileOpen(false);
                 signOut();
               }}
-              className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-[16px] font-display text-red-400 active:bg-red-400/10"
+              className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-[15px] font-display text-red-400/80 active:bg-red-400/5"
             >
               <LogoutIcon />
               Sign Out
             </button>
           )}
 
-          {/* Satirical mobile footer */}
-          <div className="mt-auto pt-6 border-t border-ww-border">
-            <p className="text-[11px] text-slate-700 font-mono text-center">
+          <div className="mt-auto pt-6 border-t border-[#1a1a2e]">
+            <p className="text-[10px] text-slate-800 font-mono text-center">
               You&apos;re spending data just by having this menu open.
             </p>
           </div>
@@ -216,8 +217,6 @@ export function Navbar() {
 }
 
 // --- SVG ICONS ---
-// Kept inline to avoid external icon library dependency.
-// These can be swapped for lucide-react icons later if desired.
 
 function HomeIcon() {
   return (

@@ -1,8 +1,5 @@
 "use client";
 
-// NOTE: In later tasks, this will pull from your Zustand store or session.
-// For now it accepts props with hardcoded fallbacks.
-
 interface CurrencyDisplayProps {
   crunchCoin?: number;
   trickleTokens?: number;
@@ -13,27 +10,25 @@ export function CurrencyDisplay({
   trickleTokens = 0,
 }: CurrencyDisplayProps) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2.5">
       {/* CrunchCoin */}
-      <div className="flex items-center gap-1.5 bg-crunch-bg border border-crunch-border rounded-lg px-2.5 py-1.5">
+      <div className="flex items-center gap-1.5 bg-gradient-to-r from-crunch-bg to-transparent border border-crunch-border rounded-lg px-2.5 py-1.5">
         <CrunchCoinIcon />
-        <span className="font-mono text-[13px] font-semibold text-crunch">
+        <span className="font-mono text-[13px] font-bold text-crunch tracking-tight">
           {crunchCoin.toLocaleString()}
         </span>
       </div>
 
       {/* Trickle Tokens */}
-      <div className="flex items-center gap-1.5 bg-trickle-bg border border-trickle-border rounded-lg px-2.5 py-1.5">
+      <div className="flex items-center gap-1.5 bg-gradient-to-r from-trickle-bg to-transparent border border-trickle-border rounded-lg px-2.5 py-1.5">
         <TrickleTokenIcon />
-        <span className="font-mono text-[13px] font-semibold text-trickle">
+        <span className="font-mono text-[13px] font-bold text-trickle tracking-tight">
           {trickleTokens.toLocaleString()}
         </span>
       </div>
     </div>
   );
 }
-
-// --- Inline SVG Icons ---
 
 function CrunchCoinIcon() {
   return (

@@ -1,7 +1,5 @@
 "use client";
 
-// --- TICKER DATA ---
-// Each entry gets color-coded: green for ▲, red for bearish/zero values, gray for neutral
 const TICKER_ITEMS = [
   { text: "CC/USD +2.4% ▲", sentiment: "bull" },
   { text: "DIGNITY INDEX: 0.00", sentiment: "bear" },
@@ -22,34 +20,27 @@ const TICKER_ITEMS = [
 type Sentiment = "bull" | "bear" | "neutral";
 
 const SENTIMENT_COLORS: Record<Sentiment, string> = {
-  bull: "text-green-400",
-  bear: "text-red-400",
-  neutral: "text-slate-500",
+  bull: "text-emerald-400/80",
+  bear: "text-red-400/80",
+  neutral: "text-slate-600",
 };
 
-// --- SEPARATOR DOT ---
-function Dot() {
-  return <span className="text-slate-700 text-[8px] mx-2">●</span>;
-}
-
-// --- TICKER ---
 export function Ticker() {
-  // Double the items so the loop is seamless
   const items = [...TICKER_ITEMS, ...TICKER_ITEMS];
 
   return (
-    <div className="overflow-hidden bg-gradient-to-r from-[#0d0d14] via-[#111119] to-[#0d0d14] border-b border-[#1e1e2e] py-1.5">
+    <div className="overflow-hidden bg-[#09090f] border-b border-[#141424] py-1.5">
       <div className="animate-ticker flex items-center w-max gap-0">
         {items.map((item, i) => (
           <span key={i} className="flex items-center">
             <span
-              className={`text-[11px] font-mono tracking-wider whitespace-nowrap ${
+              className={`text-[10px] font-mono tracking-[0.1em] whitespace-nowrap ${
                 SENTIMENT_COLORS[item.sentiment]
               }`}
             >
               {item.text}
             </span>
-            <Dot />
+            <span className="text-[#1a1a2e] text-[6px] mx-3">&bull;</span>
           </span>
         ))}
       </div>

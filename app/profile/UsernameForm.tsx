@@ -46,7 +46,7 @@ export function UsernameForm({ currentUsername }: UsernameFormProps) {
     return (
       <button
         onClick={() => setIsEditing(true)}
-        className="w-full px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-sm text-slate-400 hover:text-slate-200 transition-colors font-mono"
+        className="w-full px-4 py-2.5 bg-[#111120] hover:bg-[#16162a] border border-[#1a1a2e] hover:border-[#2a2a3e] rounded-xl text-[12px] text-slate-500 hover:text-slate-300 transition-all font-mono uppercase tracking-wider cursor-pointer"
       >
         {currentUsername ? "Change Username" : "Set Username"}
       </button>
@@ -58,12 +58,12 @@ export function UsernameForm({ currentUsername }: UsernameFormProps) {
       <div>
         <label
           htmlFor="username"
-          className="block text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-1.5"
+          className="block text-[9px] font-mono text-slate-600 uppercase tracking-[0.2em] mb-1.5"
         >
           Username
         </label>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 font-mono text-sm">
             @
           </span>
           <input
@@ -73,17 +73,17 @@ export function UsernameForm({ currentUsername }: UsernameFormProps) {
             onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))}
             placeholder="your_username"
             maxLength={20}
-            className="w-full pl-8 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 font-mono placeholder:text-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20"
+            className="w-full pl-8 pr-4 py-2.5 bg-[#0a0a14] border border-[#1a1a2e] rounded-xl text-sm text-slate-200 font-mono placeholder:text-slate-700 focus:outline-none focus:border-crunch/30 focus:ring-1 focus:ring-crunch/10"
             autoFocus
           />
         </div>
-        <p className="mt-1 text-[10px] text-slate-600 font-mono">
+        <p className="mt-1 text-[9px] text-slate-700 font-mono">
           Letters, numbers, underscores only. Max 20 chars.
         </p>
       </div>
 
       {error && (
-        <p className="text-xs text-red-400 font-mono">{error}</p>
+        <p className="text-[11px] text-red-400 font-mono animate-shake">{error}</p>
       )}
 
       <div className="flex gap-2">
@@ -94,7 +94,7 @@ export function UsernameForm({ currentUsername }: UsernameFormProps) {
             setUsername(currentUsername || "");
             setError(null);
           }}
-          className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-sm text-slate-400 transition-colors"
+          className="flex-1 px-4 py-2 bg-[#111120] hover:bg-[#16162a] border border-[#1a1a2e] rounded-xl text-[12px] text-slate-500 transition-colors font-mono cursor-pointer"
           disabled={isLoading}
         >
           Cancel
@@ -102,7 +102,7 @@ export function UsernameForm({ currentUsername }: UsernameFormProps) {
         <button
           type="submit"
           disabled={isLoading || !username.trim() || username === currentUsername}
-          className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 disabled:text-slate-500 text-amber-950 font-semibold rounded-xl text-sm transition-colors"
+          className="flex-1 px-4 py-2 bg-crunch hover:bg-crunch-dark disabled:bg-[#1a1a2e] disabled:text-slate-600 text-amber-950 font-bold rounded-xl text-[12px] transition-colors font-display uppercase tracking-wider cursor-pointer"
         >
           {isLoading ? "Saving..." : "Save"}
         </button>

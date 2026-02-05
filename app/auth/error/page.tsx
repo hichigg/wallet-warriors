@@ -1,8 +1,5 @@
 "use client";
 
-// app/auth/error/page.tsx
-// Authentication error page
-
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -60,22 +57,34 @@ function ErrorContent() {
   const errorInfo = ERROR_MESSAGES[errorType] || ERROR_MESSAGES.Default;
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-6">
-      <div className="w-full max-w-md text-center">
-        {/* Error icon */}
+    <div className="relative min-h-[80vh] flex items-center justify-center px-6">
+      {/* Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(239,68,68,0.03)_0%,transparent_60%)] pointer-events-none" />
+
+      <div className="relative w-full max-w-md text-center">
+        {/* Icon */}
         <div className="text-6xl mb-6">💀</div>
 
-        {/* Error content */}
-        <h1 className="text-2xl font-extrabold text-slate-100 font-display tracking-tight mb-3">
+        {/* Tag */}
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="h-px w-8 bg-red-500/20" />
+          <span className="font-mono text-[9px] text-red-400/50 tracking-[0.25em] uppercase">
+            Error
+          </span>
+          <div className="h-px w-8 bg-red-500/20" />
+        </div>
+
+        {/* Title */}
+        <h1 className="text-2xl font-extrabold text-slate-50 font-display tracking-tight mb-3">
           {errorInfo.title}
         </h1>
         <p className="text-sm text-slate-500 font-body mb-8">
           {errorInfo.description}
         </p>
 
-        {/* Error code badge */}
-        <div className="inline-block px-3 py-1.5 bg-red-500/10 border border-red-500/30 rounded-lg mb-8">
-          <span className="font-mono text-[11px] text-red-400 tracking-wide uppercase">
+        {/* Error code */}
+        <div className="inline-block px-3 py-1.5 bg-red-500/[0.06] border border-red-500/15 rounded-lg mb-8">
+          <span className="font-mono text-[10px] text-red-400/70 tracking-[0.15em] uppercase">
             Error: {errorType}
           </span>
         </div>
@@ -84,20 +93,20 @@ function ErrorContent() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/auth/signin"
-            className="px-6 py-3 bg-crunch hover:bg-crunch-hover text-crunch-dark font-semibold rounded-xl transition-all duration-200"
+            className="px-6 py-3 bg-crunch hover:bg-crunch-dark text-amber-950 font-bold rounded-xl transition-all duration-200 font-display text-sm uppercase tracking-wider"
           >
             Try Again
           </Link>
           <Link
             href="/"
-            className="px-6 py-3 bg-ww-surface hover:bg-ww-surface-hover border border-ww-border text-slate-300 font-semibold rounded-xl transition-all duration-200"
+            className="px-6 py-3 bg-[#111120] hover:bg-[#16162a] border border-[#1a1a2e] text-slate-300 font-semibold rounded-xl transition-all duration-200 font-display text-sm"
           >
             Go Home
           </Link>
         </div>
 
-        {/* Satirical footer */}
-        <p className="mt-12 text-[10px] text-slate-800 font-mono">
+        {/* Fake error ID */}
+        <p className="mt-12 text-[9px] text-[#1a1a2e] font-mono">
           Error ID: {Math.random().toString(36).substring(2, 10).toUpperCase()}
           <br />
           (This ID means nothing. Just like our error handling.)
@@ -112,7 +121,7 @@ export default function AuthErrorPage() {
     <Suspense
       fallback={
         <div className="min-h-[80vh] flex items-center justify-center">
-          <div className="text-slate-500">Loading...</div>
+          <div className="text-slate-700 font-mono text-sm animate-pulse">Loading...</div>
         </div>
       }
     >
