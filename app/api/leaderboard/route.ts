@@ -25,9 +25,9 @@ export async function GET(request: NextRequest) {
   const category = categoryParam as LeaderboardCategory;
   const limit = limitParam ? parseInt(limitParam, 10) : 50;
 
-  if (isNaN(limit) || limit < 1 || limit > 100) {
+  if (isNaN(limit) || limit < 1 || limit > 500) {
     return NextResponse.json(
-      { error: "Limit must be between 1 and 100." },
+      { error: "Limit must be between 1 and 500." },
       { status: 400 },
     );
   }

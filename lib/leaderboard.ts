@@ -28,7 +28,7 @@ export interface LeaderboardData {
 }
 
 const DEFAULT_LIMIT = 50;
-const MAX_LIMIT = 100;
+const MAX_LIMIT = 500;
 
 export async function getLeaderboard(
   category: LeaderboardCategory = "ranking",
