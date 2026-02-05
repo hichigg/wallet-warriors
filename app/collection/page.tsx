@@ -4,6 +4,14 @@ import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CharacterCard } from "@/components/CharacterCard";
+import { FeedButton } from "@/components/FeedButton";
+import {
+  getNextFeedCost,
+  getFeedLevel,
+  getFeedLevelName,
+  MAX_FED_POWER,
+  POWER_PER_FEED,
+} from "@/lib/feed";
 
 export default async function CollectionPage() {
   const session = await getSession();
@@ -12,14 +20,22 @@ export default async function CollectionPage() {
     redirect("/auth/signin?callbackUrl=/collection");
   }
 
-  const userCharacters = await prisma.userCharacter.findMany({
-    where: { userId: session.user.id },
-    include: { character: true },
-    orderBy: [
-      { character: { rarity: "desc" } },
-      { character: { name: "asc" } },
-    ],
-  });
+  const [userCharacters, currentUser] = await Promise.all([
+    prisma.userCharacter.findMany({
+      where: { userId: session.user.id },
+      include: { character: true },
+      orderBy: [
+        { character: { rarity: "desc" } },
+        { character: { name: "asc" } },
+      ],
+    }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { crunchCoin: true },
+    }),
+  ]);
+
+  const userCrunchCoin = currentUser?.crunchCoin ?? 0;
 
   const totalCharacters = await prisma.character.count();
   const ownedCount = userCharacters.length;
@@ -122,14 +138,29 @@ export default async function CollectionPage() {
           <EmptyCollection />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {userCharacters.map((uc) => (
-              <CharacterCard
-                key={uc.id}
-                character={uc.character}
-                fedPower={uc.fedPower}
-                acquiredAt={uc.acquiredAt}
-              />
-            ))}
+            {userCharacters.map((uc) => {
+              const rarity = uc.character.rarity;
+              return (
+                <CharacterCard
+                  key={uc.id}
+                  character={uc.character}
+                  fedPower={uc.fedPower}
+                  acquiredAt={uc.acquiredAt}
+                >
+                  <FeedButton
+                    userCharacterId={uc.id}
+                    currentFedPower={uc.fedPower}
+                    maxFedPower={MAX_FED_POWER[rarity] ?? 100}
+                    nextCost={getNextFeedCost(uc.fedPower, rarity)}
+                    powerPerFeed={POWER_PER_FEED[rarity] ?? 5}
+                    feedLevel={getFeedLevel(uc.fedPower, rarity)}
+                    feedLevelName={getFeedLevelName(uc.fedPower, rarity)}
+                    userCrunchCoin={userCrunchCoin}
+                    rarity={rarity}
+                  />
+                </CharacterCard>
+              );
+            })}
           </div>
         )}
       </div>

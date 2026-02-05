@@ -8,6 +8,7 @@ interface CharacterCardProps {
   fedPower?: number;
   acquiredAt?: Date;
   showBio?: boolean;
+  children?: React.ReactNode;
 }
 
 const RARITY_CONFIG = {
@@ -78,6 +79,7 @@ export function CharacterCard({
   fedPower = 0,
   acquiredAt,
   showBio = false,
+  children,
 }: CharacterCardProps) {
   const [expanded, setExpanded] = useState(showBio);
   const config = RARITY_CONFIG[character.rarity as keyof typeof RARITY_CONFIG];
@@ -153,6 +155,9 @@ export function CharacterCard({
             Acquired {formatDate(acquiredAt)}
           </p>
         )}
+
+        {/* Action slot */}
+        {children}
       </div>
     </div>
   );
