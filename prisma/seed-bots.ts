@@ -137,6 +137,53 @@ const MAX_FED_POWER: Record<number, number> = {
   5: 1500,
 };
 
+// --- Package data (mirrors lib/stripe.ts CRUNCHCOIN_PACKAGES) ---
+
+const PACKAGES = [
+  { id: "seed_round",       price: 4.99,  crunchCoin: 500 },
+  { id: "series_a",         price: 9.99,  crunchCoin: 900 },
+  { id: "series_b",         price: 24.99, crunchCoin: 2000 },
+  { id: "ipo",              price: 49.99, crunchCoin: 3500 },
+  { id: "hostile_takeover", price: 99.99, crunchCoin: 6000 },
+];
+
+// Pick packages that plausibly sum to totalSpent
+function generateTransactions(totalSpent: number, userId: string): {
+  userId: string;
+  amount: number;
+  crunchCoinGranted: number;
+  packageType: string;
+  status: "COMPLETED";
+  createdAt: Date;
+}[] {
+  if (totalSpent <= 0) return [];
+
+  const txns: ReturnType<typeof generateTransactions> = [];
+  let remaining = totalSpent;
+
+  // Work from largest package down
+  while (remaining >= PACKAGES[0].price - 0.01) {
+    // Pick the largest package that fits, with some randomness
+    const affordable = PACKAGES.filter((p) => p.price <= remaining + 0.50);
+    const pkg = pick(affordable);
+
+    remaining -= pkg.price;
+    txns.push({
+      userId,
+      amount: pkg.price,
+      crunchCoinGranted: pkg.crunchCoin,
+      packageType: pkg.id,
+      status: "COMPLETED",
+      createdAt: new Date(Date.now() - randInt(1, 30) * 24 * 60 * 60 * 1000 - randInt(0, 86400000)),
+    });
+
+    // Safety valve
+    if (txns.length > 50) break;
+  }
+
+  return txns;
+}
+
 async function main() {
   console.log("\n🤖 Generating bot users...\n");
 
@@ -273,8 +320,20 @@ async function main() {
         await prisma.userCharacter.createMany({ data: charAssignments });
       }
 
+      // Build and batch insert transaction history
+      const allTxns: ReturnType<typeof generateTransactions> = [];
+      for (const d of batch) {
+        const botId = usernameToId.get(d.username);
+        if (!botId || d.totalSpent <= 0) continue;
+        allTxns.push(...generateTransactions(d.totalSpent, botId));
+      }
+
+      if (allTxns.length > 0) {
+        await prisma.transaction.createMany({ data: allTxns });
+      }
+
       totalCreated += batch.length;
-      console.log(`    Batch ${Math.floor(b / BATCH_SIZE) + 1}: +${batch.length} bots, +${charAssignments.length} chars (${totalCreated} total)`);
+      console.log(`    Batch ${Math.floor(b / BATCH_SIZE) + 1}: +${batch.length} bots, +${charAssignments.length} chars, +${allTxns.length} txns (${totalCreated} total)`);
     }
 
     console.log();
@@ -285,16 +344,16 @@ async function main() {
   const botChars = await prisma.userCharacter.count({
     where: { user: { isBot: true } },
   });
+  const botTxns = await prisma.transaction.count({
+    where: { user: { isBot: true } },
+  });
 
   console.log("📊 Bot Summary:");
   console.log(`  Total bots: ${botCount}`);
   console.log(`  Total character assignments: ${botChars}`);
+  console.log(`  Total transactions: ${botTxns}`);
 
   for (const config of BOT_TIERS) {
-    const count = await prisma.user.count({
-      where: { isBot: true },
-    });
-    // Just show tier breakdown
     console.log(`  ${config.tier}: ${config.count} created`);
   }
 
