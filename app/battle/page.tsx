@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -109,9 +110,12 @@ export default async function BattlePage() {
                 Battle Log
               </h2>
               <div className="h-px flex-1 bg-[#1a1a2e]" />
-              <span className="text-[10px] font-mono text-slate-600">
-                Last {recentBattles.length}
-              </span>
+              <Link
+                href="/battle/history"
+                className="text-[10px] font-mono text-slate-600 hover:text-slate-400 transition-colors"
+              >
+                View all &rarr;
+              </Link>
             </div>
 
             <div className="bg-gradient-to-b from-[#111120] to-[#0c0c18] border border-[#1a1a2e] rounded-2xl overflow-hidden">
