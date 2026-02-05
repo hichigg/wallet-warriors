@@ -152,12 +152,12 @@ export default async function BattlePage() {
                 return (
                   <div
                     key={b.id}
-                    className={`flex items-center justify-between px-5 py-4 ${
+                    className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 px-4 sm:px-5 py-3 sm:py-4 ${
                       i < recentBattles.length - 1 ? "border-b border-[#1a1a2e]" : ""
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                         won ? "bg-emerald-500/10" : "bg-red-500/10"
                       }`}>
                         <span className={`text-sm font-bold font-mono ${

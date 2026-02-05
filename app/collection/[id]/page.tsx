@@ -125,7 +125,7 @@ export default async function CharacterPage({
 
           <div className="px-6 pb-8">
             {/* Hero section: avatar + info side by side on md+ */}
-            <div className="flex flex-col md:flex-row gap-6 mb-8">
+            <div className="flex flex-col md:flex-row gap-4 sm:gap-6 mb-8">
               {/* Large Avatar */}
               <div className={`w-full md:w-64 aspect-square rounded-xl bg-gradient-to-br ${config.gradient} border border-white/[0.06] flex items-center justify-center flex-shrink-0`}>
                 <span className="text-8xl opacity-70">{emoji}</span>
@@ -207,7 +207,7 @@ export default async function CharacterPage({
               {/* Cost breakdown */}
               {!isMaxed && (
                 <div className="mt-4 pt-4 border-t border-[#1a1a2e]">
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1.5">
                     <div className="flex justify-between">
                       <span className="text-[9px] font-mono text-slate-700 uppercase tracking-wider">Next feed</span>
                       <span className="text-[10px] font-mono text-slate-500">{nextCost} CC</span>

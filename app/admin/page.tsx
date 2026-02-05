@@ -162,7 +162,7 @@ export default async function AdminPage() {
                   {recentBotBattles.map((b) => (
                     <div
                       key={b.id}
-                      className="flex items-center justify-between px-4 py-2.5 bg-[#0a0a14] rounded-lg border border-[#141428]"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-3 px-3 sm:px-4 py-2.5 bg-[#0a0a14] rounded-lg border border-[#141428]"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="text-[11px] font-mono text-slate-400 truncate">
@@ -175,8 +175,8 @@ export default async function AdminPage() {
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4 shrink-0">
-                        <span className="text-[10px] font-mono text-slate-600">
+                      <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                        <span className="text-[10px] font-mono text-slate-600 hidden sm:inline">
                           {b.attackerPower} vs {b.defenderPower}
                         </span>
                         <span className="text-[10px] font-mono text-crunch">

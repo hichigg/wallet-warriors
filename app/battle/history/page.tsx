@@ -75,7 +75,7 @@ export default async function BattleHistoryPage() {
         />
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mb-10">
           <StatBox label="Battles" value={totalBattles.toString()} subtext="Total fights" accent="text-sky-400" />
           <StatBox label="Wins" value={wins.toString()} subtext={`${winRate}% rate`} accent="text-emerald-400" />
           <StatBox label="Losses" value={losses.toString()} subtext="Hostile rejections" accent="text-red-400" />
@@ -152,16 +152,14 @@ export default async function BattleHistoryPage() {
 
                   {/* Power breakdown */}
                   <div className="pl-10 md:pl-0">
-                    <div className="flex items-center gap-2 text-[11px] font-mono">
-                      <span className="text-slate-400">{myPower.toLocaleString()}</span>
-                      <span className={`${(myRoll ?? 0) >= 0 ? "text-emerald-400/70" : "text-red-400/70"}`}>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] font-mono">
+                      <span className="text-slate-200 font-bold">{myFinal.toLocaleString()}</span>
+                      <span className={`text-[10px] ${(myRoll ?? 0) >= 0 ? "text-emerald-400/70" : "text-red-400/70"}`}>
                         ({(myRoll ?? 0) >= 0 ? "+" : ""}{myRoll ?? "?"})
                       </span>
-                      <span className="text-slate-700">=</span>
-                      <span className="text-slate-200 font-bold">{myFinal.toLocaleString()}</span>
                       <span className="text-slate-700">vs</span>
                       <span className="text-slate-200 font-bold">{theirFinal.toLocaleString()}</span>
-                      <span className={`${(theirRoll ?? 0) >= 0 ? "text-emerald-400/70" : "text-red-400/70"}`}>
+                      <span className={`text-[10px] ${(theirRoll ?? 0) >= 0 ? "text-emerald-400/70" : "text-red-400/70"}`}>
                         ({(theirRoll ?? 0) >= 0 ? "+" : ""}{theirRoll ?? "?"})
                       </span>
                     </div>

@@ -127,14 +127,14 @@ export function BuzzwordSelector({
         <p className="text-[9px] font-mono text-slate-700 uppercase tracking-wider mb-2">
           Buy Buzzwords
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
           {shopBuzzwords.map((bw) => {
             const canAfford = localCC >= bw.cost;
             const isBuying = buying === bw.id;
             return (
               <div
                 key={bw.id}
-                className="bg-[#0a0a14] border border-[#141428] rounded-lg p-3"
+                className="bg-[#0a0a14] border border-[#141428] rounded-lg p-2.5 sm:p-3"
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[11px] font-display font-bold text-slate-300">

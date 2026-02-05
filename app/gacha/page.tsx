@@ -53,7 +53,7 @@ export default async function GachaPage() {
             </h3>
             <div className="h-px flex-1 bg-[#1a1a2e]" />
           </div>
-          <div className="grid grid-cols-5 gap-2 text-center">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-center">
             {Object.entries(GACHA_RATES).map(([rarity, rate]) => (
               <div key={rarity} className="p-2 rounded-lg bg-white/[0.02]">
                 <div className={`text-sm font-bold mb-0.5 ${getRarityColor(Number(rarity))}`}>

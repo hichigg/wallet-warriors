@@ -25,7 +25,7 @@ export function LeaderboardTabs() {
           key={cat.id}
           onClick={() => handleSelect(cat.id)}
           className={`
-            flex items-center gap-2 px-4 py-2.5 rounded-xl text-[11px] font-mono uppercase tracking-wider
+            flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-[11px] font-mono uppercase tracking-wider
             transition-all duration-200 border
             ${active === cat.id
               ? "bg-crunch/10 border-crunch-border text-crunch"

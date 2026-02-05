@@ -212,11 +212,11 @@ export function BattleArena({
 
           {/* Battle Animation Phases */}
           {battle && phase !== "idle" && phase !== "matchmaking" && (
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Attacker Side */}
-              <div className={`flex-1 text-center ${phase === "reveal" || phase === "rolling" || phase === "clash" || phase === "result" ? "animate-clash-left" : ""}`}>
+              <div className={`flex-1 w-full sm:w-auto text-center ${phase === "reveal" || phase === "rolling" || phase === "clash" || phase === "result" ? "sm:animate-clash-left" : ""}`}>
                 <div className={`
-                  inline-block rounded-2xl border p-6 transition-all duration-500
+                  inline-block rounded-2xl border p-4 sm:p-6 transition-all duration-500
                   ${phase === "result" && battle.attackerWon
                     ? "border-emerald-500/40 animate-winner-glow bg-emerald-500/[0.04]"
                     : phase === "result" && !battle.attackerWon
@@ -255,7 +255,7 @@ export function BattleArena({
               </div>
 
               {/* VS / Clash */}
-              <div className="flex-shrink-0 w-16 text-center">
+              <div className="flex-shrink-0 w-10 sm:w-16 text-center">
                 {phase === "clash" ? (
                   <div className="animate-slam">
                     <span className="text-4xl font-black font-display text-crunch">&#9889;</span>
@@ -270,9 +270,9 @@ export function BattleArena({
               </div>
 
               {/* Defender Side */}
-              <div className={`flex-1 text-center ${phase === "reveal" || phase === "rolling" || phase === "clash" || phase === "result" ? "animate-clash-right" : ""}`}>
+              <div className={`flex-1 w-full sm:w-auto text-center ${phase === "reveal" || phase === "rolling" || phase === "clash" || phase === "result" ? "sm:animate-clash-right" : ""}`}>
                 <div className={`
-                  inline-block rounded-2xl border p-6 transition-all duration-500
+                  inline-block rounded-2xl border p-4 sm:p-6 transition-all duration-500
                   ${phase === "result" && !battle.attackerWon
                     ? "border-emerald-500/40 animate-winner-glow bg-emerald-500/[0.04]"
                     : phase === "result" && battle.attackerWon
