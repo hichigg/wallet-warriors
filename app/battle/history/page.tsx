@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
+
+export const metadata: Metadata = {
+  title: "Battle History | Wallet Warriors",
+  description: "Review your combat record. Every loss is a spending opportunity.",
+};
 
 export default async function BattleHistoryPage() {
   const session = await getSession();

@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "hichigg@gmail.com")
+export const metadata: Metadata = {
+  title: "Admin | Wallet Warriors",
+  robots: { index: false, follow: false },
+};
+
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
   .split(",")
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);

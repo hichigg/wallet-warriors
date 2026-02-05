@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getSession } from "@/lib/auth-helpers";
 import { getLeaderboard, type LeaderboardCategory } from "@/lib/leaderboard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LeaderboardTabs } from "@/components/LeaderboardTabs";
+
+export const metadata: Metadata = {
+  title: "Leaderboard | Wallet Warriors",
+  description: "The leaderboard of regret. Rankings by power, spending, and collection size.",
+};
 
 const VALID_CATEGORIES: LeaderboardCategory[] = ["ranking", "spending", "power", "collection"];
 

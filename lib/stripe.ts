@@ -2,6 +2,7 @@
 // Stripe client singleton + CrunchCoin package definitions
 
 import Stripe from "stripe";
+import { STRIPE_SECRET_KEY } from "./env";
 
 const globalForStripe = globalThis as unknown as {
   stripe: Stripe | undefined;
@@ -10,7 +11,7 @@ const globalForStripe = globalThis as unknown as {
 export function getStripe(): Stripe {
   if (globalForStripe.stripe) return globalForStripe.stripe;
 
-  const client = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const client = new Stripe(STRIPE_SECRET_KEY());
 
   if (process.env.NODE_ENV !== "production") {
     globalForStripe.stripe = client;

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth-helpers";
+import { rateLimit } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 import {
   executePull,
   checkFreePullEligibility,
@@ -20,6 +22,9 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
+
+    const limited = rateLimit(`gacha:${session.user.id}`, { maxRequests: 10, windowMs: 60_000 });
+    if (limited) return limited;
 
     const body = await request.json();
     const { currency, count = 1 } = body as { currency?: PullCurrency; count?: number };
@@ -79,7 +84,7 @@ export async function POST(request: Request) {
       totalPulls: results.length,
     });
   } catch (error) {
-    console.error("Gacha pull error:", error);
+    logger.error("Gacha pull error:", error);
     return NextResponse.json(
       { error: "Failed to execute pull" },
       { status: 500 }
@@ -111,7 +116,7 @@ export async function GET() {
       pityThreshold: PITY_THRESHOLD,
     });
   } catch (error) {
-    console.error("Gacha status error:", error);
+    logger.error("Gacha status error:", error);
     return NextResponse.json(
       { error: "Failed to get gacha status" },
       { status: 500 }

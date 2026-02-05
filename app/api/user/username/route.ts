@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export async function PATCH(request: Request) {
   try {
@@ -55,7 +56,7 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({ username: user.username });
   } catch (error) {
-    console.error("Username update error:", error);
+    logger.error("Username update error:", error);
     return NextResponse.json(
       { error: "Failed to update username" },
       { status: 500 }

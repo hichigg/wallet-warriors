@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import prisma from "@/lib/prisma";
 import Stripe from "stripe";
+import { STRIPE_WEBHOOK_SECRET } from "@/lib/env";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -21,11 +23,11 @@ export async function POST(request: NextRequest) {
     event = getStripe().webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      STRIPE_WEBHOOK_SECRET()
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error(`Webhook signature verification failed: ${message}`);
+    logger.error("Webhook signature verification failed:", message);
     return NextResponse.json(
       { error: "Invalid signature" },
       { status: 400 }
@@ -59,7 +61,7 @@ export async function POST(request: NextRequest) {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const transactionId = session.metadata?.transactionId;
   if (!transactionId) {
-    console.error("Webhook: checkout.session.completed missing transactionId in metadata");
+    logger.error("Webhook: checkout.session.completed missing transactionId in metadata");
     return;
   }
 
@@ -68,7 +70,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   });
 
   if (!transaction) {
-    console.error(`Webhook: Transaction ${transactionId} not found`);
+    logger.error("Webhook: Transaction not found:", transactionId);
     return;
   }
 

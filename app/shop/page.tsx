@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { CRUNCHCOIN_PACKAGES } from "@/lib/stripe";
+
+export const metadata: Metadata = {
+  title: "CrunchCoin Shop | Wallet Warriors",
+  description: "Buy CrunchCoin with real money. Every package is a bad investment.",
+};
 import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
 import { PackageCard } from "@/components/shop/PackageCard";
 

@@ -24,7 +24,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Local env files
-.env*.local
+.env.local
 .env
 
 # Vercel
@@ -37,5 +37,10 @@ next-env.d.ts
 # IDE
 .idea/
 .vscode/
+
+# Claude Code
+.claude/
+MEMORY.md
+nul
 
 /lib/generated/prisma

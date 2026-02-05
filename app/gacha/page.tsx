@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { GachaPull } from "@/components/gacha/GachaPull";
+
+export const metadata: Metadata = {
+  title: "Gacha Pulls | Wallet Warriors",
+  description: "Roll for billionaire caricatures. Rates are transparent. Your spending won't be.",
+};
 import {
   checkFreePullEligibility,
   PULL_COST_CRUNCHCOIN,

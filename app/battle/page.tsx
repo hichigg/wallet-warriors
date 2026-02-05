@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
+
+export const metadata: Metadata = {
+  title: "Battle Arena | Wallet Warriors",
+  description: "PvP battles where power equals spending. May the biggest wallet win.",
+};
 import { BattleArena } from "@/components/BattleArena";
 import { getUserTotalPower } from "@/lib/battle";
 import { BattlePageClient } from "./BattlePageClient";

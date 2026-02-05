@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
+
+export const metadata: Metadata = {
+  title: "Profile | Wallet Warriors",
+  description: "Your warrior profile. Stats, spending history, and badges of financial shame.",
+};
 import { YourRank } from "@/components/YourRank";
 import { UsernameForm } from "./UsernameForm";
 

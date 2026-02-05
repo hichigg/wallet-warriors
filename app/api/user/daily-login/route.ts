@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // Trickle Token rewards based on streak day (1-7, then repeats)
 // Designed to total ~$10 USD worth over 1 year of perfect daily logins
@@ -116,7 +117,7 @@ export async function POST() {
       message: `+${reward} Trickle Tokens! Day ${newStreak} streak`,
     });
   } catch (error) {
-    console.error("Daily login error:", error);
+    logger.error("Daily login error:", error);
     return NextResponse.json(
       { error: "Failed to process daily login" },
       { status: 500 }
@@ -175,7 +176,7 @@ export async function GET() {
       trickleTokens: user.trickleTokens,
     });
   } catch (error) {
-    console.error("Daily login check error:", error);
+    logger.error("Daily login check error:", error);
     return NextResponse.json(
       { error: "Failed to check daily login status" },
       { status: 500 }

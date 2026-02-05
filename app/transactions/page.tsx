@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { CRUNCHCOIN_PACKAGES } from "@/lib/stripe";
+
+export const metadata: Metadata = {
+  title: "Transactions | Wallet Warriors",
+  description: "Your complete spending history. A paper trail of questionable decisions.",
+};
 import { PageHeader } from "@/components/ui/PageHeader";
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; border: string; label: string }> = {

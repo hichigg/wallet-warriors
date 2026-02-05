@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
+
+export const metadata: Metadata = {
+  title: "Collection | Wallet Warriors",
+  description: "View your collection of billionaire caricatures. Feed them to make them stronger.",
+};
 import { CharacterCard } from "@/components/CharacterCard";
 import { FeedButton } from "@/components/FeedButton";
 import {
