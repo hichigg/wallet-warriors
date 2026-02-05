@@ -16,14 +16,21 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     redirect("/auth/signin?callbackUrl=/shop");
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      crunchCoin: true,
-      trickleTokens: true,
-      totalSpent: true,
-    },
-  });
+  const [user, recentTransactions] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        crunchCoin: true,
+        trickleTokens: true,
+        totalSpent: true,
+      },
+    }),
+    prisma.transaction.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+  ]);
 
   if (!user) {
     redirect("/auth/signin?callbackUrl=/shop");
@@ -184,6 +191,75 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             );
           })}
         </div>
+
+        {/* Transaction History */}
+        {recentTransactions.length > 0 && (
+          <div className="mb-16">
+            <div className="flex items-center gap-4 mb-6">
+              <h2 className="text-xs font-mono text-slate-500 uppercase tracking-[0.2em]">
+                Transaction Ledger
+              </h2>
+              <div className="h-px flex-1 bg-[#1a1a2e]" />
+              <span className="text-[10px] font-mono text-slate-600">
+                Last {recentTransactions.length}
+              </span>
+            </div>
+
+            <div className="bg-gradient-to-b from-[#111120] to-[#0c0c18] border border-[#1a1a2e] rounded-2xl overflow-hidden">
+              {recentTransactions.map((tx, i) => {
+                const pkg = CRUNCHCOIN_PACKAGES[tx.packageType];
+                const statusConfig = {
+                  COMPLETED: { color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20", label: "Completed" },
+                  PENDING: { color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20", label: "Pending" },
+                  FAILED: { color: "text-slate-500", bg: "bg-slate-500/10", border: "border-slate-500/20", label: "Failed" },
+                  REFUNDED: { color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20", label: "Refunded" },
+                }[tx.status] || { color: "text-slate-500", bg: "bg-slate-500/10", border: "border-slate-500/20", label: tx.status };
+
+                return (
+                  <div
+                    key={tx.id}
+                    className={`flex items-center justify-between px-5 py-4 ${
+                      i < recentTransactions.length - 1 ? "border-b border-[#1a1a2e]" : ""
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 h-8 rounded-lg bg-crunch/10 flex items-center justify-center">
+                        <span className="text-crunch text-sm font-bold font-mono">$</span>
+                      </div>
+                      <div>
+                        <p className="text-sm text-slate-200 font-display font-bold">
+                          {pkg?.name || tx.packageType}
+                        </p>
+                        <p className="text-[10px] text-slate-600 font-mono">
+                          {tx.createdAt.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <p className="text-sm font-mono font-bold text-crunch">
+                          +{tx.crunchCoinGranted.toLocaleString()}
+                        </p>
+                        <p className="text-[10px] text-slate-600 font-mono">
+                          ${Number(tx.amount).toFixed(2)}
+                        </p>
+                      </div>
+                      <span className={`text-[9px] font-mono uppercase tracking-wider px-2 py-1 rounded-md ${statusConfig.bg} ${statusConfig.color} ${statusConfig.border} border`}>
+                        {statusConfig.label}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Footer disclaimer — editorial style */}
         <div className="max-w-xl mx-auto text-center border-t border-[#1a1a2e] pt-8">

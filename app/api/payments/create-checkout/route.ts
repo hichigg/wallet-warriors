@@ -3,6 +3,8 @@ import { getSession } from "@/lib/auth-helpers";
 import { getStripe, CRUNCHCOIN_PACKAGES } from "@/lib/stripe";
 import prisma from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(request: NextRequest) {
   const session = await getSession();
   if (!session?.user?.id) {
