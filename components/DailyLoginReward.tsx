@@ -8,6 +8,7 @@ interface RewardState {
   reward: number;
   streak: number;
   isStreakReset: boolean;
+  error?: string;
 }
 
 export function DailyLoginReward() {
@@ -31,8 +32,14 @@ export function DailyLoginReward() {
             isStreakReset: data.isStreakReset,
           });
         }
-      } catch (error) {
-        console.error("Failed to claim daily reward:", error);
+      } catch {
+        setRewardState({
+          show: true,
+          reward: 0,
+          streak: 0,
+          isStreakReset: false,
+          error: "Failed to claim daily reward. Try refreshing.",
+        });
       }
     };
 
@@ -76,73 +83,93 @@ export function DailyLoginReward() {
 
         {/* Content */}
         <div className="relative text-center">
-          {/* Icon */}
-          <div className="text-5xl mb-5 animate-bounce">💧</div>
-
-          {/* Tag */}
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="h-px w-8 bg-trickle/30" />
-            <span className="font-mono text-[9px] text-trickle/60 tracking-[0.25em] uppercase">
-              Daily Reward
-            </span>
-            <div className="h-px w-8 bg-trickle/30" />
-          </div>
-
-          {/* Title */}
-          <h2 className="text-2xl font-extrabold text-slate-50 font-display tracking-tight mb-2">
-            Welcome Back
-          </h2>
-
-          {/* Streak info */}
-          {rewardState.isStreakReset ? (
-            <p className="text-xs text-red-400 font-mono mb-5">
-              Streak reset — starting fresh
-            </p>
-          ) : (
-            <p className="text-xs text-slate-500 font-mono mb-5">
-              Day {rewardState.streak} streak
-              {rewardState.streak >= 7 && " — Max bonus!"}
-            </p>
-          )}
-
-          {/* Reward amount */}
-          <div className="bg-trickle-bg border border-trickle-border rounded-xl p-5 mb-6">
-            <p className="text-4xl font-black text-trickle font-mono tracking-tight">
-              +{rewardState.reward}
-            </p>
-            <p className="text-[11px] text-trickle/50 font-mono mt-1 uppercase tracking-wider">
-              Trickle Tokens
-            </p>
-          </div>
-
-          {/* Streak preview */}
-          <div className="flex justify-center gap-1.5 mb-6">
-            {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-              <div
-                key={day}
-                className={`w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-mono font-bold transition-all ${
-                  day <= rewardState.streak
-                    ? "bg-amber-500 text-amber-950 shadow-[0_0_10px_rgba(245,158,11,0.2)]"
-                    : "bg-[#1a1a2e] text-slate-700 border border-[#222236]"
-                }`}
+          {rewardState.error ? (
+            <>
+              <div className="text-5xl mb-5">⚠️</div>
+              <h2 className="text-2xl font-extrabold text-slate-50 font-display tracking-tight mb-2">
+                Oops
+              </h2>
+              <p className="text-xs text-red-400 font-mono mb-6">
+                {rewardState.error}
+              </p>
+              <button
+                onClick={handleClose}
+                className="w-full px-6 py-3 bg-[#1a1a2e] hover:bg-[#222236] text-slate-400 font-bold font-display rounded-xl transition-all duration-200 uppercase tracking-wider text-sm"
               >
-                {day}
+                Dismiss
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Icon */}
+              <div className="text-5xl mb-5 animate-bounce">💧</div>
+
+              {/* Tag */}
+              <div className="flex items-center justify-center gap-3 mb-3">
+                <div className="h-px w-8 bg-trickle/30" />
+                <span className="font-mono text-[9px] text-trickle/60 tracking-[0.25em] uppercase">
+                  Daily Reward
+                </span>
+                <div className="h-px w-8 bg-trickle/30" />
               </div>
-            ))}
-          </div>
 
-          {/* Satirical text */}
-          <p className="text-[10px] text-slate-700 font-mono mb-5">
-            Keep logging in daily. We need the engagement metrics.
-          </p>
+              {/* Title */}
+              <h2 className="text-2xl font-extrabold text-slate-50 font-display tracking-tight mb-2">
+                Welcome Back
+              </h2>
 
-          {/* Close button */}
-          <button
-            onClick={handleClose}
-            className="w-full px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-bold font-display rounded-xl transition-all duration-200 shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 uppercase tracking-wider text-sm"
-          >
-            Collect
-          </button>
+              {/* Streak info */}
+              {rewardState.isStreakReset ? (
+                <p className="text-xs text-red-400 font-mono mb-5">
+                  Streak reset — starting fresh
+                </p>
+              ) : (
+                <p className="text-xs text-slate-500 font-mono mb-5">
+                  Day {rewardState.streak} streak
+                  {rewardState.streak >= 7 && " — Max bonus!"}
+                </p>
+              )}
+
+              {/* Reward amount */}
+              <div className="bg-trickle-bg border border-trickle-border rounded-xl p-5 mb-6">
+                <p className="text-4xl font-black text-trickle font-mono tracking-tight">
+                  +{rewardState.reward}
+                </p>
+                <p className="text-[11px] text-trickle/50 font-mono mt-1 uppercase tracking-wider">
+                  Trickle Tokens
+                </p>
+              </div>
+
+              {/* Streak preview */}
+              <div className="flex justify-center gap-1.5 mb-6">
+                {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+                  <div
+                    key={day}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-mono font-bold transition-all ${
+                      day <= rewardState.streak
+                        ? "bg-amber-500 text-amber-950 shadow-[0_0_10px_rgba(245,158,11,0.2)]"
+                        : "bg-[#1a1a2e] text-slate-700 border border-[#222236]"
+                    }`}
+                  >
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              {/* Satirical text */}
+              <p className="text-[10px] text-slate-700 font-mono mb-5">
+                Keep logging in daily. We need the engagement metrics.
+              </p>
+
+              {/* Close button */}
+              <button
+                onClick={handleClose}
+                className="w-full px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-bold font-display rounded-xl transition-all duration-200 shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 uppercase tracking-wider text-sm"
+              >
+                Collect
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -32,11 +32,13 @@ export function BuzzwordSelector({
   disabled,
 }: BuzzwordSelectorProps) {
   const [buying, setBuying] = useState<string | null>(null);
+  const [buyError, setBuyError] = useState<string | null>(null);
   const [localBuzzwords, setLocalBuzzwords] = useState(buzzwords);
   const [localCC, setLocalCC] = useState(crunchCoin);
 
   async function handleBuy(buzzwordId: string) {
     setBuying(buzzwordId);
+    setBuyError(null);
     try {
       const res = await fetch("/api/buzzwords/buy", {
         method: "POST",
@@ -51,9 +53,11 @@ export function BuzzwordSelector({
           ),
         );
         setLocalCC(data.newCrunchCoin);
+      } else {
+        setBuyError(data.error ?? "Purchase failed");
       }
     } catch {
-      // silent fail
+      setBuyError("Network error — try again");
     } finally {
       setBuying(null);
     }
@@ -120,6 +124,13 @@ export function BuzzwordSelector({
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Buy error */}
+        {buyError && (
+          <div className="mb-3 px-3 py-2 bg-red-500/[0.06] border border-red-500/20 rounded-lg">
+            <span className="text-[11px] font-mono text-red-400">{buyError}</span>
           </div>
         )}
 
