@@ -2,6 +2,7 @@
 // Battle system — matchmaking + resolution with RNG variance and ranking points
 
 import { prisma } from "./prisma";
+import { applyBuzzwordBoost, type BuzzwordEffect } from "./buzzwords";
 
 // --- Constants ---
 
@@ -38,6 +39,7 @@ export interface BattleResult {
     id: string;
     name: string;
     basePower: number;
+    boostedPower: number;
     roll: number;
     finalPower: number;
     rankingPointsBefore: number;
@@ -47,6 +49,7 @@ export interface BattleResult {
     id: string;
     name: string;
     basePower: number;
+    boostedPower: number;
     roll: number;
     finalPower: number;
     rankingPointsBefore: number;
@@ -55,6 +58,7 @@ export interface BattleResult {
   winnerId: string;
   rankingPointsChange: number;
   attackerWon: boolean;
+  buzzwordUsed: string | null;
 }
 
 export interface BattleError {
@@ -149,6 +153,7 @@ async function findOpponent(
 
 export async function executeBattle(
   attackerId: string,
+  buzzwordId?: string,
 ): Promise<BattleResult | BattleError> {
   // 1. Verify attacker exists and get their data
   const attacker = await prisma.user.findUnique({
@@ -190,6 +195,30 @@ export async function executeBattle(
     return { success: false, error: "Your total power is 0. Feed your characters first." };
   }
 
+  // 3b. Validate and resolve buzzword (if provided)
+  let buzzwordEffect: BuzzwordEffect | null = null;
+  let buzzwordName: string | null = null;
+
+  if (buzzwordId) {
+    const userBuzzword = await prisma.userBuzzword.findUnique({
+      where: { userId_buzzwordId: { userId: attackerId, buzzwordId } },
+      include: { buzzword: true },
+    });
+
+    if (!userBuzzword || userBuzzword.quantity < 1) {
+      return { success: false, error: "You don't own that buzzword." };
+    }
+
+    buzzwordEffect = userBuzzword.buzzword.effect as unknown as BuzzwordEffect;
+    buzzwordName = userBuzzword.buzzword.name;
+
+    // Consume one buzzword
+    await prisma.userBuzzword.update({
+      where: { id: userBuzzword.id },
+      data: { quantity: { decrement: 1 } },
+    });
+  }
+
   // 4. Find opponent
   const opponent = await findOpponent(attackerId, attacker.rankingPoints);
   if (!opponent) {
@@ -199,11 +228,21 @@ export async function executeBattle(
   // 5. Calculate defender power
   const defenderBasePower = await getUserTotalPower(opponent.id);
 
-  // 6. Roll RNG variance for both sides
-  const attackerRoll = rollVariance(attackerBasePower);
-  const defenderRoll = rollVariance(defenderBasePower);
-  const attackerFinalPower = Math.max(1, attackerBasePower + attackerRoll);
-  const defenderFinalPower = Math.max(1, defenderBasePower + defenderRoll);
+  // 5b. Apply buzzword boost
+  let attackerBoostedPower = attackerBasePower;
+  let defenderBoostedPower = defenderBasePower;
+
+  if (buzzwordEffect) {
+    const boosted = applyBuzzwordBoost(attackerBasePower, defenderBasePower, buzzwordEffect);
+    attackerBoostedPower = boosted.attackerPower;
+    defenderBoostedPower = boosted.defenderPower;
+  }
+
+  // 6. Roll RNG variance for both sides (applied to boosted power)
+  const attackerRoll = rollVariance(attackerBoostedPower);
+  const defenderRoll = rollVariance(defenderBoostedPower);
+  const attackerFinalPower = Math.max(1, attackerBoostedPower + attackerRoll);
+  const defenderFinalPower = Math.max(1, defenderBoostedPower + defenderRoll);
 
   // 7. Determine winner (attacker wins ties — aggressor advantage)
   const attackerWon = attackerFinalPower >= defenderFinalPower;
@@ -226,11 +265,12 @@ export async function executeBattle(
         attackerId,
         defenderId: opponent.id,
         winnerId,
-        attackerPower: attackerBasePower,
-        defenderPower: defenderBasePower,
+        attackerPower: attackerBoostedPower,
+        defenderPower: defenderBoostedPower,
         attackerRoll,
         defenderRoll,
         rankingPointsChange,
+        buzzwordsUsed: buzzwordId ? [buzzwordId] : undefined,
       },
     }),
     prisma.user.update({
@@ -258,6 +298,7 @@ export async function executeBattle(
       id: attackerId,
       name: attacker.name ?? "Unknown",
       basePower: attackerBasePower,
+      boostedPower: attackerBoostedPower,
       roll: attackerRoll,
       finalPower: attackerFinalPower,
       rankingPointsBefore: attacker.rankingPoints,
@@ -267,6 +308,7 @@ export async function executeBattle(
       id: opponent.id,
       name: opponent.name ?? "Unknown",
       basePower: defenderBasePower,
+      boostedPower: defenderBoostedPower,
       roll: defenderRoll,
       finalPower: defenderFinalPower,
       rankingPointsBefore: opponent.rankingPoints,
@@ -275,5 +317,6 @@ export async function executeBattle(
     winnerId,
     rankingPointsChange,
     attackerWon,
+    buzzwordUsed: buzzwordName,
   };
 }

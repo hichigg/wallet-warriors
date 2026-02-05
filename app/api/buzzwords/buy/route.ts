@@ -1,20 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth-helpers";
-import { executeBattle } from "@/lib/battle";
+import { buyBuzzword } from "@/lib/buzzwords";
 
 export async function POST(req: NextRequest) {
-  // 1. Auth check
   const session = await getSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // 2. Parse optional buzzwordId
-  const body = await req.json().catch(() => ({}));
-  const buzzwordId = typeof body?.buzzwordId === "string" ? body.buzzwordId : undefined;
+  const body = await req.json().catch(() => null);
+  const buzzwordId = body?.buzzwordId;
 
-  // 3. Execute battle (matchmaking + resolution + optional buzzword)
-  const result = await executeBattle(session.user.id, buzzwordId);
+  if (!buzzwordId || typeof buzzwordId !== "string") {
+    return NextResponse.json({ error: "buzzwordId is required" }, { status: 400 });
+  }
+
+  const result = await buyBuzzword(session.user.id, buzzwordId);
 
   if (!result.success) {
     return NextResponse.json({ error: result.error }, { status: 400 });

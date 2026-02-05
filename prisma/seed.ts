@@ -155,6 +155,47 @@ const characters = [
   },
 ];
 
+// --- Buzzword definitions ---
+
+const buzzwords = [
+  {
+    name: "Synergy",
+    cost: 50,
+    effect: { type: "power_boost_pct", value: 10 },
+    description: "Leveraging cross-functional alignment for a 10% power boost.",
+  },
+  {
+    name: "Disruption",
+    cost: 100,
+    effect: { type: "power_boost_pct", value: 15 },
+    description: "Move fast and break their portfolio. +15% power.",
+  },
+  {
+    name: "Pivot",
+    cost: 150,
+    effect: { type: "opponent_debuff_pct", value: 12 },
+    description: "Strategic repositioning. Opponent loses 12% power.",
+  },
+  {
+    name: "Blockchain",
+    cost: 200,
+    effect: { type: "power_boost_pct", value: 20 },
+    description: "Decentralized superiority. +20% power.",
+  },
+  {
+    name: "AI-Powered",
+    cost: 350,
+    effect: { type: "power_boost_pct", value: 25 },
+    description: "Our algorithm is literally just if-statements. +25% power.",
+  },
+  {
+    name: "Growth Hack",
+    cost: 500,
+    effect: { type: "power_boost_pct", value: 30 },
+    description: "One weird trick that actually works. +30% power.",
+  },
+];
+
 async function main() {
   console.log("🌱 Seeding characters...\n");
 
@@ -195,6 +236,31 @@ async function main() {
 
   const total = await prisma.character.count();
   console.log(`\n✅ Total: ${total} characters seeded!\n`);
+
+  // --- Seed buzzwords ---
+  console.log("💬 Seeding buzzwords...\n");
+
+  for (const bw of buzzwords) {
+    const created = await prisma.buzzword.upsert({
+      where: { name: bw.name },
+      update: {
+        cost: bw.cost,
+        effect: bw.effect,
+        description: bw.description,
+      },
+      create: {
+        name: bw.name,
+        cost: bw.cost,
+        effect: bw.effect,
+        description: bw.description,
+      },
+    });
+
+    console.log(`  💬 ${created.name} — ${bw.cost} CC (${bw.effect.type}: ${bw.effect.value}%)`);
+  }
+
+  const bwTotal = await prisma.buzzword.count();
+  console.log(`\n✅ Total: ${bwTotal} buzzwords seeded!\n`);
 }
 
 main()

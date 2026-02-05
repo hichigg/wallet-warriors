@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { BattleArena } from "@/components/BattleArena";
 import { getUserTotalPower } from "@/lib/battle";
+import { BattlePageClient } from "./BattlePageClient";
 
 export default async function BattlePage() {
   const session = await getSession();
@@ -13,11 +14,12 @@ export default async function BattlePage() {
     redirect("/auth/signin?callbackUrl=/battle");
   }
 
-  const [user, recentBattles] = await Promise.all([
+  const [user, recentBattles, allBuzzwords, userBuzzwords] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session.user.id },
       select: {
         name: true,
+        crunchCoin: true,
         rankingPoints: true,
         _count: {
           select: {
@@ -42,6 +44,11 @@ export default async function BattlePage() {
       orderBy: { createdAt: "desc" },
       take: 10,
     }),
+    prisma.buzzword.findMany({ orderBy: { cost: "asc" } }),
+    prisma.userBuzzword.findMany({
+      where: { userId: session.user.id },
+      select: { buzzwordId: true, quantity: true },
+    }),
   ]);
 
   if (!user) {
@@ -52,6 +59,17 @@ export default async function BattlePage() {
   const winRate = user._count.battlesAsAttacker > 0
     ? Math.round((user._count.battlesWon / user._count.battlesAsAttacker) * 100)
     : 0;
+
+  // Build buzzword inventory for client
+  const inventoryMap = new Map(userBuzzwords.map((ub) => [ub.buzzwordId, ub.quantity]));
+  const buzzwordsForClient = allBuzzwords.map((bw) => ({
+    id: bw.id,
+    name: bw.name,
+    cost: bw.cost,
+    effect: bw.effect as { type: string; value: number },
+    description: bw.description ?? "",
+    owned: inventoryMap.get(bw.id) ?? 0,
+  }));
 
   return (
     <div className="relative min-h-screen">
@@ -92,13 +110,15 @@ export default async function BattlePage() {
           />
         </div>
 
-        {/* Arena */}
+        {/* Arena + Buzzwords */}
         <div className="mb-10">
-          <BattleArena
+          <BattlePageClient
             userName={user.name ?? "Unknown"}
             userPower={userPower}
             userRanking={user.rankingPoints}
             hasCharacters={user._count.characters > 0}
+            buzzwords={buzzwordsForClient}
+            crunchCoin={user.crunchCoin}
           />
         </div>
 

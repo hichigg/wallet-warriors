@@ -28,6 +28,7 @@ interface BattleData {
   winnerId: string;
   rankingPointsChange: number;
   attackerWon: boolean;
+  buzzwordUsed: string | null;
 }
 
 interface BattleArenaProps {
@@ -35,6 +36,7 @@ interface BattleArenaProps {
   userPower: number;
   userRanking: number;
   hasCharacters: boolean;
+  selectedBuzzwordId?: string | null;
 }
 
 export function BattleArena({
@@ -42,6 +44,7 @@ export function BattleArena({
   userPower,
   userRanking,
   hasCharacters,
+  selectedBuzzwordId,
 }: BattleArenaProps) {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("idle");
@@ -120,7 +123,11 @@ export function BattleArena({
     setRollTickR(0);
 
     try {
-      const res = await fetch("/api/battle", { method: "POST" });
+      const res = await fetch("/api/battle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ buzzwordId: selectedBuzzwordId || undefined }),
+      });
       const data = await res.json();
 
       if (!res.ok || !data.success) {
@@ -320,6 +327,9 @@ export function BattleArena({
                   {battle.attacker.finalPower.toLocaleString()} vs {battle.defender.finalPower.toLocaleString()}
                   {" "}&#x2022;{" "}
                   {battle.attackerWon ? "+" : "-"}{battle.rankingPointsChange} ranking points
+                  {battle.buzzwordUsed && (
+                    <span className="ml-2 text-crunch/70">&#x2022; {battle.buzzwordUsed} deployed</span>
+                  )}
                 </p>
               </div>
             </div>
