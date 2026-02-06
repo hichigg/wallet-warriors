@@ -70,6 +70,8 @@ model User {
   totalSpent      Decimal   @default(0) @db.Decimal(10, 2) // Lifetime $ spent
   rankingPoints   Int       @default(0)
   pityCounter     Int       @default(0) // Pulls since last 5★
+  guaranteedBanner Boolean  @default(false) // 50/50 pity: next 5★ is guaranteed banner
+  weeklyFreePull  Boolean   @default(false) // Granted every 7 consecutive login days
   isBot           Boolean   @default(false)
   lastLoginAt     DateTime?
   loginStreak     Int       @default(0) // Consecutive daily logins
@@ -86,6 +88,7 @@ model User {
   battlesAsAttacker Battle[] @relation("Attacker")
   battlesAsDefender Battle[] @relation("Defender")
   battlesWon        Battle[] @relation("Winner")
+  achievements      UserAchievement[]
 
   @@index([rankingPoints(sort: Desc)]) // For leaderboard queries
   @@index([isBot])
@@ -102,7 +105,8 @@ model Character {
   createdAt DateTime @default(now())
 
   // Relations
-  owners UserCharacter[]
+  owners  UserCharacter[]
+  banners GachaBanner[]
 
   @@index([rarity])
 }
@@ -205,4 +209,69 @@ model UserBuzzword {
 
   @@unique([userId, buzzwordId])
   @@index([userId])
+}
+
+// ============================================
+// Gacha Banner System
+// ============================================
+
+model GachaBanner {
+  id              String   @id @default(cuid())
+  name            String
+  featuredCharId  String
+  rateUpPercent   Int      @default(50) // % chance to get featured char when pulling its rarity
+  startDate       DateTime
+  endDate         DateTime
+  createdAt       DateTime @default(now())
+
+  featuredChar Character @relation(fields: [featuredCharId], references: [id])
+
+  @@index([startDate, endDate])
+}
+
+// ============================================
+// Achievement System
+// ============================================
+
+model Achievement {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String
+  rewardCC    Int      @default(0)
+  rewardTT    Int      @default(0)
+  iconEmoji   String   @default("🏆")
+  createdAt   DateTime @default(now())
+
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+}
+
+// ============================================
+// Seasonal Events
+// ============================================
+
+model SeasonalEvent {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  type        String   // "double_tokens" | "rate_boost" | "purchase_bonus"
+  value       Int      // multiplier or percentage
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([startDate, endDate])
 }

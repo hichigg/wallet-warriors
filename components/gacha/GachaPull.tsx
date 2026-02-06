@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { PullAnimation } from "./PullAnimation";
+import { AchievementToast } from "../AchievementToast";
 import type { PullResult, PullCurrency } from "@/lib/gacha";
 
 interface GachaPullProps {
@@ -12,29 +13,57 @@ interface GachaPullProps {
   };
   pityCounter: number;
   freePullAvailable: boolean;
+  weeklyFreePullAvailable: boolean;
+  guaranteedBanner: boolean;
   costs: {
     crunchCoin: number;
     trickleTokens: number;
   };
+  multiPullCosts: {
+    crunchCoin: number;
+    trickleTokens: number;
+  };
+  bannerId?: string;
+  bannerName?: string;
+}
+
+interface AchievementData {
+  key: string;
+  name: string;
+  description: string;
+  rewardCC: number;
+  rewardTT: number;
+  iconEmoji: string;
 }
 
 type PullState = "idle" | "pulling" | "animating";
 
-export function GachaPull({ userBalance, pityCounter, freePullAvailable, costs }: GachaPullProps) {
+export function GachaPull({
+  userBalance,
+  pityCounter,
+  freePullAvailable,
+  weeklyFreePullAvailable,
+  guaranteedBanner,
+  costs,
+  multiPullCosts,
+  bannerId,
+  bannerName,
+}: GachaPullProps) {
   const router = useRouter();
   const [state, setState] = useState<PullState>("idle");
   const [currency, setCurrency] = useState<PullCurrency>("crunchCoin");
   const [pullResults, setPullResults] = useState<PullResult[]>([]);
   const [isFreePull, setIsFreePull] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [newAchievements, setNewAchievements] = useState<AchievementData[]>([]);
 
   const canAffordSingle = currency === "crunchCoin"
     ? userBalance.crunchCoin >= costs.crunchCoin
     : userBalance.trickleTokens >= costs.trickleTokens;
 
   const canAfford10 = currency === "crunchCoin"
-    ? userBalance.crunchCoin >= costs.crunchCoin * 10
-    : userBalance.trickleTokens >= costs.trickleTokens * 10;
+    ? userBalance.crunchCoin >= multiPullCosts.crunchCoin
+    : userBalance.trickleTokens >= multiPullCosts.trickleTokens;
 
   const executePull = useCallback(async (count: 1 | 10) => {
     setError(null);
@@ -44,7 +73,7 @@ export function GachaPull({ userBalance, pityCounter, freePullAvailable, costs }
       const res = await fetch("/api/gacha/pull", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currency, count }),
+        body: JSON.stringify({ currency, count, bannerId }),
       });
 
       const data = await res.json();
@@ -57,12 +86,46 @@ export function GachaPull({ userBalance, pityCounter, freePullAvailable, costs }
 
       setPullResults(data.pulls);
       setIsFreePull(data.isFreePull || false);
+      if (data.newAchievements?.length > 0) {
+        setNewAchievements(data.newAchievements);
+      }
       setState("animating");
     } catch {
       setError("Network error. Please try again.");
       setState("idle");
     }
-  }, [currency]);
+  }, [currency, bannerId]);
+
+  const executeWeeklyFreePull = useCallback(async () => {
+    setError(null);
+    setState("pulling");
+
+    try {
+      const res = await fetch("/api/gacha/pull", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ weeklyFreePull: true, bannerId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Pull failed");
+        setState("idle");
+        return;
+      }
+
+      setPullResults(data.pulls);
+      setIsFreePull(true);
+      if (data.newAchievements?.length > 0) {
+        setNewAchievements(data.newAchievements);
+      }
+      setState("animating");
+    } catch {
+      setError("Network error. Please try again.");
+      setState("idle");
+    }
+  }, [bannerId]);
 
   const handleAnimationComplete = useCallback(() => {
     setState("idle");
@@ -73,16 +136,32 @@ export function GachaPull({ userBalance, pityCounter, freePullAvailable, costs }
   // Show animation overlay
   if (state === "animating" && pullResults.length > 0) {
     return (
-      <PullAnimation
-        results={pullResults}
-        onComplete={handleAnimationComplete}
-        isFreePull={isFreePull}
-      />
+      <>
+        <PullAnimation
+          results={pullResults}
+          onComplete={handleAnimationComplete}
+          isFreePull={isFreePull}
+        />
+        {newAchievements.length > 0 && (
+          <AchievementToast
+            achievements={newAchievements}
+            onDismiss={() => setNewAchievements([])}
+          />
+        )}
+      </>
     );
   }
 
   return (
     <div className="space-y-8">
+      {/* Achievement Toast */}
+      {newAchievements.length > 0 && (
+        <AchievementToast
+          achievements={newAchievements}
+          onDismiss={() => setNewAchievements([])}
+        />
+      )}
+
       {/* Pity Counter */}
       <div className="bg-ww-surface border border-ww-border rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
@@ -109,7 +188,21 @@ export function GachaPull({ userBalance, pityCounter, freePullAvailable, costs }
             Soft pity active! Increased 5★ rates.
           </p>
         )}
+        {guaranteedBanner && bannerId && (
+          <p className="mt-2 text-xs text-purple-400 font-mono">
+            Next 5★ is guaranteed banner character!
+          </p>
+        )}
       </div>
+
+      {/* Banner Active Indicator */}
+      {bannerId && bannerName && (
+        <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-3 text-center">
+          <span className="text-xs font-mono text-purple-400 uppercase tracking-wider">
+            Banner Active: {bannerName}
+          </span>
+        </div>
+      )}
 
       {/* Free Pull Banner */}
       {freePullAvailable && (
@@ -130,6 +223,30 @@ export function GachaPull({ userBalance, pityCounter, freePullAvailable, costs }
               className="px-8 py-3 bg-trickle hover:bg-trickle-dark text-black font-bold rounded-xl transition-all duration-200 disabled:opacity-50"
             >
               {state === "pulling" ? "Pulling..." : "Claim Free Pull"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Weekly Free Pull Banner */}
+      {!freePullAvailable && weeklyFreePullAvailable && (
+        <div className="relative overflow-hidden bg-gradient-to-r from-purple-500/20 via-purple-400/10 to-purple-500/20 border border-purple-500/40 rounded-xl p-6 text-center">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shine"
+               style={{ backgroundSize: "200% 100%" }} />
+          <div className="relative z-10">
+            <span className="text-4xl mb-3 block">🎯</span>
+            <h3 className="text-xl font-bold text-purple-400 font-display mb-1">
+              Weekly Free Pull!
+            </h3>
+            <p className="text-sm text-slate-400 mb-4">
+              7-day login streak reward. Full rates, no cost!
+            </p>
+            <button
+              onClick={executeWeeklyFreePull}
+              disabled={state === "pulling"}
+              className="px-8 py-3 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-xl transition-all duration-200 disabled:opacity-50"
+            >
+              {state === "pulling" ? "Pulling..." : "Claim Weekly Pull"}
             </button>
           </div>
         </div>
@@ -242,13 +359,16 @@ export function GachaPull({ userBalance, pityCounter, freePullAvailable, costs }
                   10-Pull
                 </div>
                 <div className={`text-sm font-mono mt-1 ${currency === "crunchCoin" ? "text-crunch" : "text-trickle"}`}>
-                  {currency === "crunchCoin" ? costs.crunchCoin * 10 : costs.trickleTokens * 10}
+                  {currency === "crunchCoin" ? multiPullCosts.crunchCoin : multiPullCosts.trickleTokens}
                   <span className="text-slate-500 ml-1">
                     {currency === "crunchCoin" ? "CC" : "TT"}
                   </span>
                 </div>
-                <div className="text-[10px] text-amber-400 mt-1">
-                  BETTER VALUE
+                <div className="text-[10px] text-amber-400 mt-1 font-bold">
+                  SAVE 10%
+                </div>
+                <div className="text-[9px] text-purple-400 mt-0.5">
+                  Guaranteed 3★+
                 </div>
               </div>
             </button>

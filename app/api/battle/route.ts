@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth-helpers";
 import { executeBattle } from "@/lib/battle";
 import { rateLimit } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import { checkAchievements } from "@/lib/achievements";
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,7 +27,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
-    return NextResponse.json(result);
+    // 4. Check achievements after battle
+    const newAchievements = await checkAchievements(session.user.id);
+
+    return NextResponse.json({ ...result, newAchievements });
   } catch (error) {
     logger.error("Battle error:", error);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });

@@ -196,6 +196,91 @@ const buzzwords = [
   },
 ];
 
+// --- Achievement definitions ---
+
+const achievements = [
+  {
+    key: "first_pull",
+    name: "First Time Investor",
+    description: "Complete your first gacha pull",
+    rewardCC: 50,
+    rewardTT: 0,
+    iconEmoji: "🎰",
+  },
+  {
+    key: "collect_5",
+    name: "Diversified Portfolio",
+    description: "Own 5 different characters",
+    rewardCC: 100,
+    rewardTT: 0,
+    iconEmoji: "📊",
+  },
+  {
+    key: "collect_10",
+    name: "Market Maker",
+    description: "Own 10 different characters",
+    rewardCC: 200,
+    rewardTT: 0,
+    iconEmoji: "📈",
+  },
+  {
+    key: "collect_all",
+    name: "Monopolist",
+    description: "Own all 24 characters",
+    rewardCC: 1000,
+    rewardTT: 0,
+    iconEmoji: "👑",
+  },
+  {
+    key: "first_5star",
+    name: "Struck Gold",
+    description: "Pull your first 5-star character",
+    rewardCC: 200,
+    rewardTT: 0,
+    iconEmoji: "⭐",
+  },
+  {
+    key: "first_battle",
+    name: "Market Debut",
+    description: "Win your first battle",
+    rewardCC: 50,
+    rewardTT: 0,
+    iconEmoji: "⚔️",
+  },
+  {
+    key: "win_10",
+    name: "Bull Run",
+    description: "Win 10 battles",
+    rewardCC: 200,
+    rewardTT: 0,
+    iconEmoji: "🐂",
+  },
+  {
+    key: "win_50",
+    name: "Market Dominator",
+    description: "Win 50 battles",
+    rewardCC: 500,
+    rewardTT: 0,
+    iconEmoji: "🏆",
+  },
+  {
+    key: "pity_pull",
+    name: "Pity Party",
+    description: "Hit hard pity (100 pulls)",
+    rewardCC: 100,
+    rewardTT: 0,
+    iconEmoji: "😢",
+  },
+  {
+    key: "whale_status",
+    name: "Whale Alert",
+    description: "Spend $100+ total",
+    rewardCC: 500,
+    rewardTT: 0,
+    iconEmoji: "🐋",
+  },
+];
+
 async function main() {
   console.log("🌱 Seeding characters...\n");
 
@@ -267,6 +352,89 @@ async function main() {
 
   const bwTotal = await prisma.buzzword.count();
   console.log(`\n✅ Total: ${bwTotal} buzzwords seeded!\n`);
+
+  // --- Seed achievements ---
+  console.log("🏆 Seeding achievements...\n");
+
+  for (const ach of achievements) {
+    const created = await prisma.achievement.upsert({
+      where: { key: ach.key },
+      update: {
+        name: ach.name,
+        description: ach.description,
+        rewardCC: ach.rewardCC,
+        rewardTT: ach.rewardTT,
+        iconEmoji: ach.iconEmoji,
+      },
+      create: {
+        key: ach.key,
+        name: ach.name,
+        description: ach.description,
+        rewardCC: ach.rewardCC,
+        rewardTT: ach.rewardTT,
+        iconEmoji: ach.iconEmoji,
+      },
+    });
+
+    console.log(`  ${created.iconEmoji} ${created.name} — ${created.rewardCC} CC`);
+  }
+
+  const achTotal = await prisma.achievement.count();
+  console.log(`\n✅ Total: ${achTotal} achievements seeded!\n`);
+
+  // --- Seed sample banner ---
+  console.log("🎯 Seeding sample banner...\n");
+
+  // Find Melon Husk for the sample banner
+  const melonHusk = await prisma.character.findUnique({
+    where: { name: "Melon Husk" },
+  });
+
+  if (melonHusk) {
+    // Delete existing banners first
+    await prisma.gachaBanner.deleteMany();
+
+    const bannerStart = new Date();
+    const bannerEnd = new Date();
+    bannerEnd.setDate(bannerEnd.getDate() + 7);
+
+    const banner = await prisma.gachaBanner.create({
+      data: {
+        name: "Chief Twit Spotlight",
+        featuredCharId: melonHusk.id,
+        rateUpPercent: 50,
+        startDate: bannerStart,
+        endDate: bannerEnd,
+      },
+    });
+
+    console.log(`  🎯 Banner: "${banner.name}" featuring Melon Husk (7 days)`);
+  }
+
+  console.log("");
+
+  // --- Seed sample seasonal event ---
+  console.log("🎉 Seeding sample event...\n");
+
+  await prisma.seasonalEvent.deleteMany();
+
+  const eventStart = new Date();
+  const eventEnd = new Date();
+  eventEnd.setDate(eventEnd.getDate() + 3);
+
+  const event = await prisma.seasonalEvent.create({
+    data: {
+      name: "Earnings Season",
+      description: "Double Trickle Tokens from daily login!",
+      type: "double_tokens",
+      value: 2,
+      startDate: eventStart,
+      endDate: eventEnd,
+    },
+  });
+
+  console.log(`  🎉 Event: "${event.name}" — ${event.type} x${event.value} (3 days)`);
+  console.log("\n✅ Seeding complete!\n");
 }
 
 main()

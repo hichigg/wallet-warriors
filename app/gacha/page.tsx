@@ -4,6 +4,8 @@ import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { GachaPull } from "@/components/gacha/GachaPull";
+import { BannerCard } from "@/components/gacha/BannerCard";
+import { EventBanner } from "@/components/EventBanner";
 
 export const metadata: Metadata = {
   title: "Gacha Pulls | Wallet Warriors",
@@ -11,12 +13,17 @@ export const metadata: Metadata = {
 };
 import {
   checkFreePullEligibility,
+  checkWeeklyFreePull,
+  getActiveBanner,
   PULL_COST_CRUNCHCOIN,
   PULL_COST_TRICKLE,
+  MULTI_PULL_COST_CRUNCHCOIN,
+  MULTI_PULL_COST_TRICKLE,
   GACHA_RATES,
   PITY_THRESHOLD,
   SOFT_PITY_START,
 } from "@/lib/gacha";
+import { getActiveEvents } from "@/lib/events";
 
 export default async function GachaPage() {
   const session = await getSession();
@@ -25,20 +32,26 @@ export default async function GachaPage() {
     redirect("/auth/signin?callbackUrl=/gacha");
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      crunchCoin: true,
-      trickleTokens: true,
-      pityCounter: true,
-    },
-  });
+  const [user, freePullAvailable, weeklyFreePullAvailable, activeBanner, activeEvents] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        crunchCoin: true,
+        trickleTokens: true,
+        pityCounter: true,
+        guaranteedBanner: true,
+        weeklyFreePull: true,
+      },
+    }),
+    checkFreePullEligibility(session.user.id),
+    checkWeeklyFreePull(session.user.id),
+    getActiveBanner(),
+    getActiveEvents(),
+  ]);
 
   if (!user) {
     redirect("/auth/signin?callbackUrl=/gacha");
   }
-
-  const freePullAvailable = await checkFreePullEligibility(session.user.id);
 
   return (
     <div className="relative min-h-screen">
@@ -50,6 +63,27 @@ export default async function GachaPage() {
           title="Allocate Capital"
           subtitle="Diversify your portfolio of fictional billionaires. Results may vary. Regret will not."
         />
+
+        {/* Active Event Banner */}
+        {activeEvents.length > 0 && (
+          <div className="mb-8 space-y-3">
+            {activeEvents.map((event) => (
+              <EventBanner key={event.id} event={event} />
+            ))}
+          </div>
+        )}
+
+        {/* Active Gacha Banner */}
+        {activeBanner && (
+          <div className="mb-8">
+            <BannerCard
+              name={activeBanner.name}
+              featuredChar={activeBanner.featuredChar}
+              rateUpPercent={activeBanner.rateUpPercent}
+              endDate={activeBanner.endDate}
+            />
+          </div>
+        )}
 
         {/* Rates Preview */}
         <div className="bg-gradient-to-b from-[#111120] to-[#0c0c18] border border-[#1a1a2e] rounded-2xl p-5 mb-8">
@@ -82,10 +116,18 @@ export default async function GachaPage() {
           }}
           pityCounter={user.pityCounter}
           freePullAvailable={freePullAvailable}
+          weeklyFreePullAvailable={weeklyFreePullAvailable}
+          guaranteedBanner={user.guaranteedBanner}
           costs={{
             crunchCoin: PULL_COST_CRUNCHCOIN,
             trickleTokens: PULL_COST_TRICKLE,
           }}
+          multiPullCosts={{
+            crunchCoin: MULTI_PULL_COST_CRUNCHCOIN,
+            trickleTokens: MULTI_PULL_COST_TRICKLE,
+          }}
+          bannerId={activeBanner?.id}
+          bannerName={activeBanner?.name}
         />
       </div>
     </div>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { getActiveEvents, getEventMultiplier } from "@/lib/events";
 
 // Trickle Token rewards based on streak day (1-7, then repeats)
 // Designed to total ~$10 USD worth over 1 year of perfect daily logins
@@ -91,16 +92,30 @@ export async function POST() {
       newStreak = 1;
     }
 
-    const reward = getRewardForStreak(newStreak);
+    // Check for active double_tokens event
+    const activeEvents = await getActiveEvents();
+    const tokenMultiplier = getEventMultiplier(activeEvents, "double_tokens");
+
+    const baseReward = getRewardForStreak(newStreak);
+    const reward = baseReward * tokenMultiplier;
+
+    // Check if this streak triggers a weekly free pull (every 7 consecutive days)
+    const weeklyFreePullGranted = newStreak > 0 && newStreak % 7 === 0;
 
     // Update user
+    const updateData: Record<string, unknown> = {
+      lastLoginAt: now,
+      loginStreak: newStreak,
+      trickleTokens: { increment: reward },
+    };
+
+    if (weeklyFreePullGranted) {
+      updateData.weeklyFreePull = true;
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
-      data: {
-        lastLoginAt: now,
-        loginStreak: newStreak,
-        trickleTokens: { increment: reward },
-      },
+      data: updateData,
       select: {
         loginStreak: true,
         trickleTokens: true,
@@ -111,10 +126,14 @@ export async function POST() {
       claimed: true,
       alreadyClaimed: false,
       reward,
+      baseReward,
+      tokenMultiplier,
+      isEventBonus: tokenMultiplier > 1,
       streak: updatedUser.loginStreak,
       trickleTokens: updatedUser.trickleTokens,
       isStreakReset: newStreak === 1 && user.loginStreak > 0,
-      message: `+${reward} Trickle Tokens! Day ${newStreak} streak`,
+      weeklyFreePullGranted,
+      message: `+${reward} Trickle Tokens! Day ${newStreak} streak${weeklyFreePullGranted ? " — Weekly Free Pull unlocked!" : ""}`,
     });
   } catch (error) {
     logger.error("Daily login error:", error);

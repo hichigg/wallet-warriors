@@ -8,6 +8,9 @@ interface RewardState {
   reward: number;
   streak: number;
   isStreakReset: boolean;
+  weeklyFreePullGranted?: boolean;
+  isEventBonus?: boolean;
+  tokenMultiplier?: number;
   error?: string;
 }
 
@@ -30,6 +33,9 @@ export function DailyLoginReward() {
             reward: data.reward,
             streak: data.streak,
             isStreakReset: data.isStreakReset,
+            weeklyFreePullGranted: data.weeklyFreePullGranted,
+            isEventBonus: data.isEventBonus,
+            tokenMultiplier: data.tokenMultiplier,
           });
         }
       } catch {
@@ -155,6 +161,27 @@ export function DailyLoginReward() {
                   </div>
                 ))}
               </div>
+
+              {/* Event bonus indicator */}
+              {rewardState.isEventBonus && (
+                <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-2 mb-3">
+                  <p className="text-[10px] text-purple-400 font-mono">
+                    Event bonus! {rewardState.tokenMultiplier}x tokens active
+                  </p>
+                </div>
+              )}
+
+              {/* Weekly free pull unlocked */}
+              {rewardState.weeklyFreePullGranted && (
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mb-3">
+                  <p className="text-xs text-amber-400 font-bold font-display">
+                    Weekly Free Pull unlocked!
+                  </p>
+                  <p className="text-[10px] text-amber-400/60 font-mono mt-0.5">
+                    Head to the Gacha page to claim it
+                  </p>
+                </div>
+              )}
 
               {/* Satirical text */}
               <p className="text-[10px] text-slate-700 font-mono mb-5">

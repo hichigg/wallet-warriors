@@ -19,22 +19,33 @@ export default async function ProfilePage() {
     redirect("/auth/signin?callbackUrl=/profile");
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: {
-      _count: {
-        select: {
-          characters: true,
-          battlesAsAttacker: true,
-          battlesWon: true,
+  const [user, allAchievements, userAchievements] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: {
+        _count: {
+          select: {
+            characters: true,
+            battlesAsAttacker: true,
+            battlesWon: true,
+          },
         },
       },
-    },
-  });
+    }),
+    prisma.achievement.findMany({
+      orderBy: { createdAt: "asc" },
+    }),
+    prisma.userAchievement.findMany({
+      where: { userId: session.user.id },
+      include: { achievement: true },
+    }),
+  ]);
 
   if (!user) {
     redirect("/auth/signin");
   }
+
+  const unlockedIds = new Set(userAchievements.map((ua) => ua.achievementId));
 
   const winRate =
     user._count.battlesAsAttacker > 0
@@ -156,6 +167,68 @@ export default async function ProfilePage() {
               <StatTile icon="⚔️" value={user._count.battlesAsAttacker} label="Battles Fought" />
               <StatTile icon="🏆" value={`${winRate}%`} label="Win Rate" />
             </div>
+
+            {/* Achievements */}
+            {allAchievements.length > 0 && (
+              <div className="bg-gradient-to-b from-[#111120] to-[#0c0c18] border border-[#1a1a2e] rounded-2xl p-6">
+                <div className="flex items-center gap-4 mb-5">
+                  <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] font-mono">
+                    Achievements
+                  </h3>
+                  <span className="text-[10px] font-mono text-amber-400/60">
+                    {userAchievements.length}/{allAchievements.length}
+                  </span>
+                  <div className="h-px flex-1 bg-[#1a1a2e]" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {allAchievements.map((achievement) => {
+                    const isUnlocked = unlockedIds.has(achievement.id);
+                    return (
+                      <div
+                        key={achievement.id}
+                        className={`flex items-start gap-3 p-3 rounded-xl border transition-colors ${
+                          isUnlocked
+                            ? "bg-amber-500/5 border-amber-500/20"
+                            : "bg-white/[0.01] border-[#1a1a2e] opacity-50"
+                        }`}
+                      >
+                        <span className="text-2xl flex-shrink-0">
+                          {isUnlocked ? achievement.iconEmoji : "🔒"}
+                        </span>
+                        <div className="min-w-0">
+                          <p className={`text-sm font-bold font-display ${
+                            isUnlocked ? "text-slate-100" : "text-slate-600"
+                          }`}>
+                            {achievement.name}
+                          </p>
+                          <p className="text-[10px] text-slate-600 font-mono truncate">
+                            {achievement.description}
+                          </p>
+                          {(achievement.rewardCC > 0 || achievement.rewardTT > 0) && (
+                            <div className="flex items-center gap-2 mt-1">
+                              {achievement.rewardCC > 0 && (
+                                <span className={`text-[10px] font-mono font-bold ${
+                                  isUnlocked ? "text-crunch" : "text-slate-700"
+                                }`}>
+                                  +{achievement.rewardCC} CC
+                                </span>
+                              )}
+                              {achievement.rewardTT > 0 && (
+                                <span className={`text-[10px] font-mono font-bold ${
+                                  isUnlocked ? "text-trickle" : "text-slate-700"
+                                }`}>
+                                  +{achievement.rewardTT} TT
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Your Rankings */}
             <YourRank userId={session.user.id} />
