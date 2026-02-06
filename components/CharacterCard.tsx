@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { Character } from "@prisma/client";
+import { getCharacterEmoji } from "@/lib/character-meta";
 
 interface CharacterCardProps {
   character: Character;
@@ -190,33 +191,3 @@ function formatDate(date: Date): string {
   });
 }
 
-function getCharacterEmoji(name: string): string {
-  const emojiMap: Record<string, string> = {
-    "Unpaid Intern": "👨‍💻",
-    "Hustle Culture Guru": "🧘",
-    "Crypto Bro": "🦍",
-    "LinkedIn Thought Leader": "💼",
-    "Gig Economy Warrior": "🚗",
-    "Angel Investor": "😇",
-    "Growth Hacker": "📈",
-    "Productivity Podcaster": "🎙️",
-    "NFT Artist": "🎨",
-    "Startup Founder": "🚀",
-    "Series A Survivor": "💰",
-    "Tech Conference Speaker": "🎤",
-    "Wellness CEO": "🧴",
-    "VC Partner": "🦈",
-    "DeFi Degen": "🎰",
-    "Unicorn Founder": "🦄",
-    "Corporate Raider": "🏴‍☠️",
-    "Hedge Fund Manager": "🎩",
-    "Tech Evangelist": "📣",
-    "Rocket Billionaire": "🚀",
-    "Social Media Overlord": "👁️",
-    "E-Commerce Emperor": "📦",
-    "Software Sovereign": "🪟",
-    "The Index Fund": "📊",
-  };
-
-  return emojiMap[name] || "💸";
-}

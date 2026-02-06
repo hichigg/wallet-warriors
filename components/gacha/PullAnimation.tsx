@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { PullResult } from "@/lib/gacha";
+import { CHARACTER_META } from "@/lib/character-meta";
 
 interface PullAnimationProps {
   results: PullResult[];
@@ -92,32 +93,8 @@ const RARITY_CONFIG = {
   },
 } as const;
 
-const CHARACTER_PORTRAITS: Record<string, { emoji: string; title: string }> = {
-  "Unpaid Intern": { emoji: "👨‍💻", title: "Code Monkey" },
-  "Hustle Culture Guru": { emoji: "🧘", title: "Rise & Grind" },
-  "Crypto Bro": { emoji: "🦍", title: "Diamond Hands" },
-  "LinkedIn Thought Leader": { emoji: "💼", title: "Synergy Expert" },
-  "Gig Economy Warrior": { emoji: "🚗", title: "Side Hustler" },
-  "Angel Investor": { emoji: "😇", title: "Money Angel" },
-  "Growth Hacker": { emoji: "📈", title: "Viral Genius" },
-  "Productivity Podcaster": { emoji: "🎙️", title: "Time Lord" },
-  "NFT Artist": { emoji: "🎨", title: "JPEG Dealer" },
-  "Startup Founder": { emoji: "🚀", title: "Disruptor" },
-  "Series A Survivor": { emoji: "💰", title: "Funded" },
-  "Tech Conference Speaker": { emoji: "🎤", title: "Keynote King" },
-  "Wellness CEO": { emoji: "🧴", title: "Goop Guru" },
-  "VC Partner": { emoji: "🦈", title: "Shark" },
-  "DeFi Degen": { emoji: "🎰", title: "Yield Farmer" },
-  "Unicorn Founder": { emoji: "🦄", title: "Billionaire" },
-  "Corporate Raider": { emoji: "🏴‍☠️", title: "Hostile" },
-  "Hedge Fund Manager": { emoji: "🎩", title: "Overlord" },
-  "Tech Evangelist": { emoji: "📣", title: "Believer" },
-  "Rocket Billionaire": { emoji: "🚀", title: "Space Baron" },
-  "Social Media Overlord": { emoji: "👁️", title: "Data Lord" },
-  "E-Commerce Emperor": { emoji: "📦", title: "Prime" },
-  "Software Sovereign": { emoji: "🪟", title: "Monopolist" },
-  "The Index Fund": { emoji: "📊", title: "Passive Income" },
-};
+// Character portraits sourced from shared meta
+const CHARACTER_PORTRAITS = CHARACTER_META;
 
 type Phase = "chest" | "opening" | "reveal" | "card" | "result";
 type ConfettiShape = "rect" | "circle" | "star" | "streamer";

@@ -140,11 +140,11 @@ const MAX_FED_POWER: Record<number, number> = {
 // --- Package data (mirrors lib/stripe.ts CRUNCHCOIN_PACKAGES) ---
 
 const PACKAGES = [
-  { id: "seed_round",       price: 4.99,  crunchCoin: 500 },
-  { id: "series_a",         price: 9.99,  crunchCoin: 900 },
-  { id: "series_b",         price: 24.99, crunchCoin: 2000 },
-  { id: "ipo",              price: 49.99, crunchCoin: 3500 },
-  { id: "hostile_takeover", price: 99.99, crunchCoin: 6000 },
+  { id: "pocket_change",      price: 4.99,  crunchCoin: 400 },
+  { id: "value_play",         price: 9.99,  crunchCoin: 900 },
+  { id: "smart_money",        price: 24.99, crunchCoin: 2500 },
+  { id: "compound_interest",  price: 49.99, crunchCoin: 5500 },
+  { id: "buffett_special",    price: 99.99, crunchCoin: 13000 },
 ];
 
 // Pick packages that plausibly sum to totalSpent

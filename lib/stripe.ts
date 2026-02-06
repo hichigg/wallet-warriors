@@ -33,39 +33,39 @@ export interface CrunchCoinPackage {
 }
 
 export const CRUNCHCOIN_PACKAGES: Record<string, CrunchCoinPackage> = {
-  seed_round: {
-    id: "seed_round",
-    name: "Seed Round",
+  pocket_change: {
+    id: "pocket_change",
+    name: "Pocket Change",
     priceInCents: 499,
-    crunchCoin: 500,
-    tagline: "Your first bad decision.",
+    crunchCoin: 400,
+    tagline: "Buying in small lots is like picking up pennies in front of a steamroller.",
   },
-  series_a: {
-    id: "series_a",
-    name: "Series A",
+  value_play: {
+    id: "value_play",
+    name: "Value Play",
     priceInCents: 999,
     crunchCoin: 900,
-    tagline: "Now with institutional backing (yours).",
+    tagline: "Price is what you pay. Value is what you get. This is... okay value.",
   },
-  series_b: {
-    id: "series_b",
-    name: "Series B",
+  smart_money: {
+    id: "smart_money",
+    name: "Smart Money",
     priceInCents: 2499,
-    crunchCoin: 2000,
-    tagline: "Throwing good money after bad.",
+    crunchCoin: 2500,
+    tagline: "Be greedy when others are fearful. Like right now.",
   },
-  ipo: {
-    id: "ipo",
-    name: "IPO",
+  compound_interest: {
+    id: "compound_interest",
+    name: "Compound Interest",
     priceInCents: 4999,
-    crunchCoin: 3500,
-    tagline: "Going public with your poor choices.",
+    crunchCoin: 5500,
+    tagline: "The eighth wonder of the world. You're welcome.",
   },
-  hostile_takeover: {
-    id: "hostile_takeover",
-    name: "Hostile Takeover",
+  buffett_special: {
+    id: "buffett_special",
+    name: "The Buffett Special",
     priceInCents: 9999,
-    crunchCoin: 6000,
-    tagline: "You just acquired nothing of value.",
+    crunchCoin: 13000,
+    tagline: "Our favorite holding period is forever. Especially for your money.",
   },
 };

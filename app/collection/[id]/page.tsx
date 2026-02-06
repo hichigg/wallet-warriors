@@ -12,6 +12,7 @@ import {
   MAX_FED_POWER,
   POWER_PER_FEED,
 } from "@/lib/feed";
+import { getCharacterEmoji } from "@/lib/character-meta";
 
 const RARITY_CONFIG: Record<number, { label: string; stars: string; text: string; gradient: string; accentLine: string; border: string }> = {
   5: { label: "LEGENDARY", stars: "\u2605\u2605\u2605\u2605\u2605", text: "text-amber-400", gradient: "from-amber-500/20 via-yellow-500/5 to-amber-600/20", accentLine: "bg-amber-500", border: "border-amber-500/40" },
@@ -21,32 +22,6 @@ const RARITY_CONFIG: Record<number, { label: string; stars: string; text: string
   1: { label: "COMMON", stars: "\u2605\u2606\u2606\u2606\u2606", text: "text-slate-400", gradient: "from-slate-500/15 via-slate-400/5 to-slate-600/15", accentLine: "bg-slate-500", border: "border-slate-500/25" },
 };
 
-const EMOJI_MAP: Record<string, string> = {
-  "Unpaid Intern": "\uD83D\uDC68\u200D\uD83D\uDCBB",
-  "Hustle Culture Guru": "\uD83E\uDDD8",
-  "Crypto Bro": "\uD83E\uDD8D",
-  "LinkedIn Thought Leader": "\uD83D\uDCBC",
-  "Gig Economy Warrior": "\uD83D\uDE97",
-  "Angel Investor": "\uD83D\uDE07",
-  "Growth Hacker": "\uD83D\uDCC8",
-  "Productivity Podcaster": "\uD83C\uDF99\uFE0F",
-  "NFT Artist": "\uD83C\uDFA8",
-  "Startup Founder": "\uD83D\uDE80",
-  "Series A Survivor": "\uD83D\uDCB0",
-  "Tech Conference Speaker": "\uD83C\uDF64",
-  "Wellness CEO": "\uD83E\uDDF4",
-  "VC Partner": "\uD83E\uDD88",
-  "DeFi Degen": "\uD83C\uDFB0",
-  "Unicorn Founder": "\uD83E\uDD84",
-  "Corporate Raider": "\uD83C\uDFF4\u200D\u2620\uFE0F",
-  "Hedge Fund Manager": "\uD83C\uDFA9",
-  "Tech Evangelist": "\uD83D\uDCE3",
-  "Rocket Billionaire": "\uD83D\uDE80",
-  "Social Media Overlord": "\uD83D\uDC41\uFE0F",
-  "E-Commerce Emperor": "\uD83D\uDCE6",
-  "Software Sovereign": "\uD83E\uDE9F",
-  "The Index Fund": "\uD83D\uDCCA",
-};
 
 export default async function CharacterPage({
   params,
@@ -89,7 +64,7 @@ export default async function CharacterPage({
   const isMaxed = isMaxFedPower(userCharacter.fedPower, rarity);
   const totalFeedsToMax = Math.ceil(maxPower / perFeed);
   const feedsRemaining = totalFeedsToMax - feedLevel;
-  const emoji = EMOJI_MAP[character.name] ?? "\uD83D\uDCB8";
+  const emoji = getCharacterEmoji(character.name);
 
   // Calculate total CC remaining to max
   let ccToMax = 0;

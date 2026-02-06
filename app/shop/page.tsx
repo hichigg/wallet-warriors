@@ -7,7 +7,7 @@ import { CRUNCHCOIN_PACKAGES } from "@/lib/stripe";
 
 export const metadata: Metadata = {
   title: "CrunchCoin Shop | Wallet Warriors",
-  description: "Buy CrunchCoin with real money. Every package is a bad investment.",
+  description: "Warren Buffett says to always buy in bulk. Acquire CrunchCoin today.",
 };
 import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
 import { PackageCard } from "@/components/shop/PackageCard";
@@ -75,10 +75,20 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             <span className="text-crunch">CrunchCoin</span>
           </h1>
 
-          <p className="text-base text-slate-500 font-body max-w-md leading-relaxed">
-            Convert real money into fake money. The value gets worse the more you spend.
-            This is <span className="text-slate-400 italic">intentional</span>.
+          <p className="text-base text-slate-500 font-body max-w-md leading-relaxed mb-5">
+            Convert real money into fake money. The more you buy, the more value you get.
+            Warren Buffett would <span className="text-slate-400 italic">approve</span>.
           </p>
+
+          {/* Buffett quote banner */}
+          <div className="max-w-md p-4 rounded-xl bg-amber-500/[0.04] border border-amber-500/15">
+            <p className="text-[13px] text-amber-400/90 font-body italic leading-relaxed">
+              &ldquo;Warren Buffett says to always buy in bulk.&rdquo;
+            </p>
+            <p className="text-[10px] text-amber-500/40 font-mono mt-1.5 uppercase tracking-wider">
+              &mdash; Definitely Warren Buffett
+            </p>
+          </div>
         </div>
 
         {/* Post-checkout banners */}
@@ -148,18 +158,18 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               Value Trend
             </p>
             <div className="flex items-center gap-2">
-              {/* Mini degradation sparkline */}
+              {/* Bulk value sparkline — goes UP */}
               <div className="flex items-end gap-[3px] h-6">
                 {coinsPerDollar.map((cpd, i) => (
                   <div
                     key={i}
-                    className="w-[6px] rounded-sm bg-gradient-to-t from-red-500 to-emerald-500 transition-all"
+                    className="w-[6px] rounded-sm bg-gradient-to-t from-emerald-600 to-emerald-400 transition-all"
                     style={{ height: `${(cpd / bestValue) * 100}%`, opacity: 0.4 + (cpd / bestValue) * 0.6 }}
                   />
                 ))}
               </div>
-              <span className="text-[10px] font-mono text-red-400">
-                -40%
+              <span className="text-[10px] font-mono text-emerald-400">
+                +62%
               </span>
             </div>
           </div>
@@ -168,7 +178,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         {/* Section label */}
         <div className="flex items-center gap-4 mb-6">
           <h2 className="text-xs font-mono text-slate-500 uppercase tracking-[0.2em]">
-            Investment Rounds
+            Value Packages
           </h2>
           <div className="h-px flex-1 bg-[#1a1a2e]" />
           <span className="text-[10px] font-mono text-slate-600">
@@ -277,7 +287,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             All transactions processed via Stripe &middot; Refunds within 14 days &middot; Shame is non-refundable
           </p>
           <p className="text-[10px] text-slate-800 font-mono mt-1">
-            &ldquo;The house always wins. Especially when the house sells imaginary currency.&rdquo;
+            &ldquo;Rule No. 1: Never lose money. Rule No. 2: Never forget Rule No. 1. Rule No. 3: Buy more CrunchCoin.&rdquo;
           </p>
         </div>
       </div>

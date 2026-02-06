@@ -16,11 +16,11 @@ interface PackageCardProps {
 }
 
 const TIER_ACCENTS = [
-  { border: "border-emerald-500/30", glow: "hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]", badge: "bg-emerald-500", badgeText: "text-emerald-950", bar: "bg-emerald-500", label: "SEED" },
-  { border: "border-sky-500/30", glow: "hover:shadow-[0_0_30px_rgba(14,165,233,0.15)]", badge: "bg-sky-500", badgeText: "text-sky-950", bar: "bg-sky-500", label: "SERIES A" },
-  { border: "border-violet-500/30", glow: "hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]", badge: "bg-violet-500", badgeText: "text-violet-950", bar: "bg-violet-500", label: "SERIES B" },
-  { border: "border-amber-500/30", glow: "hover:shadow-[0_0_30px_rgba(245,158,11,0.15)]", badge: "bg-amber-500", badgeText: "text-amber-950", bar: "bg-amber-500", label: "IPO" },
-  { border: "border-red-500/30", glow: "hover:shadow-[0_0_30px_rgba(239,68,68,0.15)]", badge: "bg-red-500", badgeText: "text-red-950", bar: "bg-red-500", label: "HOSTILE" },
+  { border: "border-slate-500/30", glow: "hover:shadow-[0_0_30px_rgba(148,163,184,0.15)]", badge: "bg-slate-500", badgeText: "text-slate-950", bar: "bg-slate-500", label: "STARTER" },
+  { border: "border-sky-500/30", glow: "hover:shadow-[0_0_30px_rgba(14,165,233,0.15)]", badge: "bg-sky-500", badgeText: "text-sky-950", bar: "bg-sky-500", label: "VALUE" },
+  { border: "border-emerald-500/30", glow: "hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]", badge: "bg-emerald-500", badgeText: "text-emerald-950", bar: "bg-emerald-500", label: "SMART" },
+  { border: "border-violet-500/30", glow: "hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]", badge: "bg-violet-500", badgeText: "text-violet-950", bar: "bg-violet-500", label: "COMPOUND" },
+  { border: "border-amber-500/30", glow: "hover:shadow-[0_0_30px_rgba(245,158,11,0.15)]", badge: "bg-amber-500", badgeText: "text-amber-950", bar: "bg-amber-500", label: "BUFFETT" },
 ];
 
 export function PackageCard({
@@ -75,8 +75,7 @@ export function PackageCard({
         bg-gradient-to-b from-[#111120] to-[#0c0c18]
         ${accent.border} ${accent.glow}
         ${hovered ? "translate-y-[-2px] scale-[1.01]" : ""}
-        ${isBestValue ? "ring-1 ring-emerald-500/20" : ""}
-        ${isWorstValue ? "ring-1 ring-red-500/10" : ""}
+        ${isBestValue ? "ring-1 ring-amber-500/20" : ""}
       `}
       style={{ animationDelay: `${tier * 80}ms` }}
     >
@@ -89,13 +88,13 @@ export function PackageCard({
           {accent.label}
         </span>
         {isBestValue && (
-          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Best ROI
+          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            Best Value
           </span>
         )}
         {isWorstValue && (
-          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/20">
-            Worst ROI
+          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider bg-slate-500/10 text-slate-400 border border-slate-500/20">
+            Base Rate
           </span>
         )}
       </div>
@@ -159,7 +158,7 @@ export function PackageCard({
               transition-all duration-200 cursor-pointer
               ${loading ? "opacity-50 cursor-not-allowed" : ""}
               ${isBestValue
-                ? "bg-emerald-500 text-emerald-950 hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                ? "bg-amber-500 text-amber-950 hover:bg-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
                 : "bg-white/[0.06] text-slate-300 border border-white/[0.08] hover:bg-white/[0.1] hover:text-white hover:border-white/[0.15]"
               }
             `}

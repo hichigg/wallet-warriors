@@ -31,127 +31,127 @@ const characters = [
     bio: "Fresh out of college with $200k in student debt. Works 80-hour weeks for 'exposure' and LinkedIn recommendations. Their equity package vests never.",
   },
   {
-    name: "Hustle Culture Guru",
-    rarity: 1,
-    bio: "Wakes up at 3 AM to meditate about money. Sells courses about selling courses. Has never held a real job but calls themselves a 'serial entrepreneur.'",
-  },
-  {
-    name: "Crypto Bro",
-    rarity: 1,
-    bio: "Diamond hands through a 99% loss. Still believes the flippening is coming. Profile picture is a pixelated ape they bought for $50,000.",
-  },
-  {
-    name: "LinkedIn Thought Leader",
+    name: "LinkedIn Larry",
     rarity: 1,
     bio: "Agrees. Posts 'humbled and honored' weekly. Turned getting fired into a viral post about resilience. Actually just works in middle management.",
   },
   {
-    name: "Gig Economy Warrior",
+    name: "Crypto Kyle",
     rarity: 1,
-    bio: "Works 4 delivery apps simultaneously. The algorithm is their only friend. Technically a 'small business owner' for tax purposes.",
+    bio: "Diamond hands through a 99% loss. Still believes the flippening is coming. Profile picture is a pixelated ape he bought for $50,000. Down bad.",
+  },
+  {
+    name: "Hustle Hannah",
+    rarity: 1,
+    bio: "Wakes up at 3 AM to meditate about money. Sells courses about selling courses. Has never held a real job but calls herself a 'serial entrepreneur.'",
+  },
+  {
+    name: "Gig Greg",
+    rarity: 1,
+    bio: "Works 4 delivery apps simultaneously. The algorithm is his only friend. Technically a 'small business owner' for tax purposes.",
   },
 
   // ============ 2★ UNCOMMON ============
   {
-    name: "Angel Investor",
+    name: "Gwyneth Grifrow",
     rarity: 2,
-    bio: "Inherited $2M and put $25k into 40 startups. One succeeded by accident. Now gives keynotes about their 'investment philosophy.'",
+    bio: "Sells $200 jade eggs and candles that smell like her audacity. Company valued at $500M despite negative unit economics. Goop is a lifestyle.",
   },
   {
-    name: "Growth Hacker",
+    name: "Gary Vee-Nah",
     rarity: 2,
-    bio: "Made one thing go viral in 2016 and has been coasting ever since. Actually just knows how to buy Facebook ads. Charges $500/hour.",
+    bio: "Screams motivational advice at a camera for 16 hours a day. Bought every NFT. Sells wine, sneakers, empathy, and whatever else pays. Hustle never sleeps.",
   },
   {
-    name: "Productivity Podcaster",
+    name: "Joe Rogaine",
     rarity: 2,
-    bio: "Has 47 morning routine steps and 3 hours of actual work per day. Sponsors include every nootropic company that exists.",
+    bio: "Has 47 morning routine steps including elk meat and cold plunges. Interviews aliens, scientists, and conspiracy theorists with equal credulity.",
   },
   {
-    name: "NFT Artist",
+    name: "Logan Pall",
     rarity: 2,
-    bio: "Right-clicked their way to the top. Sells procedurally generated variations of the same image. Art school professors weep.",
+    bio: "Made a crypto zoo that turned out to be a regular zoo (without animals). YouTube apology video has more views than the scandal. Keeps failing upward.",
   },
   {
-    name: "Startup Founder",
+    name: "Jack Dorsal",
     rarity: 2,
-    bio: "Disrupting an industry that didn't need disruption. Has pivoted 12 times. Current burn rate: $400k/month on ping pong tables.",
+    bio: "Built two social networks, then abandoned both to meditate in Myanmar. Now posts about Bitcoin from a cabin. Eats once per day. Decentralize everything.",
   },
 
   // ============ 3★ RARE ============
   {
-    name: "Series A Survivor",
+    name: "Travis Kaladick",
     rarity: 3,
-    bio: "Successfully raised money by saying 'AI' and 'blockchain' in the same sentence. Product still doesn't exist but valuation is $50M.",
+    bio: "Disrupted the taxi industry by ignoring every regulation. Surge pricing during emergencies is a 'feature.' Got fired from his own company for being too much.",
   },
   {
-    name: "Tech Conference Speaker",
+    name: "Elizabeth Bones",
     rarity: 3,
-    bio: "Same TED talk for 8 years straight. Collects speaker fees like Pokémon. Actually wrote one medium article in 2015 that got lucky.",
+    bio: "Claimed to revolutionize blood testing with a machine that didn't work. Faked a deep voice. Fooled Henry Kissinger somehow. Currently unavailable.",
   },
   {
-    name: "Wellness CEO",
+    name: "Adam Newmann",
     rarity: 3,
-    bio: "Sells $200 vitamins and $80 water bottles. Company valued at $500M despite negative unit economics. Gwyneth Paltrow vibes.",
+    bio: "Turned office subletting into a $47B 'tech company.' Walked away with $1.7B after it imploded. Now selling apartment living as the next big thing.",
   },
   {
-    name: "VC Partner",
+    name: "Marc Handreessen",
     rarity: 3,
-    bio: "Failed upward from three startups. Now judges others with other people's money. Bio says 'helping founders' but mostly just takes board seats.",
+    bio: "Invented the web browser then spent decades trying to burn it down. Wrote 'Why Software Is Eating the World' then ate all the software. a16z everything.",
   },
   {
-    name: "DeFi Degen",
+    name: "Vitality Butterkin",
     rarity: 3,
-    bio: "Yield farms 23 hours a day. Has been 'rugged' 17 times but keeps coming back. Speaks exclusively in incomprehensible acronyms.",
+    bio: "Created a blockchain at 19 and accidentally became a billionaire. Wears cat-ear hoodies to financial summits. Gas fees are a feature, not a bug.",
   },
 
   // ============ 4★ SUPER RARE ============
   {
-    name: "Unicorn Founder",
+    name: "Jensen Wrong",
     rarity: 4,
-    bio: "Built a $1B company on the backs of underpaid workers and regulatory arbitrage. Featured in Forbes 30 Under 30 (Fraud edition coming soon).",
+    bio: "Sold graphics cards to gamers, then pivoted to selling the same cards to AI companies at 10x the price. Leather jacket is permanently bonded to his skin.",
   },
   {
-    name: "Corporate Raider",
+    name: "Sham Bankman-Fraud",
     rarity: 4,
-    bio: "Buys companies, fires everyone, sells the parts. Calls it 'unlocking shareholder value.' Has a yacht named 'Synergy.'",
+    bio: "Ran a crypto exchange from a Bahamas penthouse with his ex-girlfriend. $8 billion vanished. Played League of Legends during meetings. Currently in timeout.",
   },
   {
-    name: "Hedge Fund Manager",
+    name: "Peter Teal",
     rarity: 4,
-    bio: "2 and 20, baby. Underperforms index funds 80% of the time but charges like they're a genius. Summer in the Hamptons is non-negotiable.",
+    bio: "PayPal mafia don turned venture vampire. Wants to live forever, move to New Zealand, and build floating libertarian cities. Funded everything sketchy.",
   },
   {
-    name: "Tech Evangelist",
+    name: "Tim Apple",
     rarity: 4,
-    bio: "Gets paid millions to tweet about products they don't use. 'Web3 is the future' while cashing checks in Web2 dollars.",
+    bio: "Renamed by a former president. Sells the same phone every year for $200 more. Courage is removing features and charging for dongles. One more thing.",
   },
 
   // ============ 5★ LEGENDARY ============
   {
-    name: "Rocket Billionaire",
+    name: "Melon Husk",
     rarity: 5,
-    bio: "So rich they're bored of Earth. Launches cars into space while employees use bottles. Posts memes instead of paying taxes. The SEC is just a suggestion.",
+    bio: "So rich he bought a social network to post memes. Launches cars into space while employees use bottles. The SEC is just a suggestion. Chief Twit.",
   },
   {
-    name: "Social Media Overlord",
+    name: "Mark Zuckerborg",
     rarity: 5,
-    bio: "Knows everything about everyone. Testified before Congress with a booster seat. 'Move fast and break things' including democracy.",
+    bio: "Knows everything about everyone. Testified before Congress with a booster seat. Spent $10B building a metaverse nobody asked for. Sweet Baby Ray's.",
   },
   {
-    name: "E-Commerce Emperor",
+    name: "Jeff Brazos",
     rarity: 5,
-    bio: "Delivers packages faster than employees can use the bathroom. Went to space for 4 minutes. Divorce cost more than most countries' GDP.",
+    bio: "Delivers packages faster than employees can use the bathroom. Went to space for 4 minutes in a rocket shaped like that. Divorce cost more than most countries' GDP.",
   },
   {
-    name: "Software Sovereign",
+    name: "Gill Bates",
     rarity: 5,
-    bio: "Ctrl+C, Ctrl+V'd their way to $100B. Embrace, extend, extinguish. Now does philanthropy for the tax benefits and PR rehabilitation.",
+    bio: "Ctrl+C, Ctrl+V'd his way to $100B. Embrace, extend, extinguish. Now does philanthropy for the tax benefits and PR rehabilitation. Would like to talk to you about mosquitoes.",
   },
   {
-    name: "The Index Fund",
+    name: "Warren Muffett",
     rarity: 5,
-    bio: "Not a person, just money. Owns a piece of literally everything. The final boss of capitalism. Passive income achieved sentience.",
+    bio: "Has been 94 years old for the last 30 years. Lives in Omaha, eats McDonald's daily, and still outperforms every hedge fund. The Oracle of value investing and Cherry Coke.",
   },
 ];
 
@@ -198,6 +198,12 @@ const buzzwords = [
 
 async function main() {
   console.log("🌱 Seeding characters...\n");
+
+  // Wipe existing characters (and their user assignments) for a clean reseed
+  console.log("  Cleaning existing character data...");
+  await prisma.userCharacter.deleteMany();
+  await prisma.character.deleteMany();
+  console.log("  ✅ Cleaned.\n");
 
   for (const char of characters) {
     const basePower = RARITY_POWER[char.rarity];
