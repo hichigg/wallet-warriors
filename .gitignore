@@ -44,3 +44,6 @@ MEMORY.md
 nul
 
 /lib/generated/prisma
+
+.vercel
+.env*.local
